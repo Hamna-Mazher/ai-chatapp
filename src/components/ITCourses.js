@@ -138,7 +138,7 @@ const platforms = [
   {
     name: "LinkedIn Learning",
     link: "https://www.linkedin.com/learning",
-    logo: envatotuts,
+    logo: linkedin,
   },
   {
     name: "SitePoint",
