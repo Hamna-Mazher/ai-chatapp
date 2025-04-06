@@ -47,8 +47,12 @@ const SignUp = () => {
           <div className="input-group">
             <input type="password" name="password" placeholder="Password" value={formData.password} onChange={handleChange} required />
           </div>
+          <p className="password-text">
+          Password must be 8 characters
+        </p>
           <button type="submit" className="signup-btn">Sign Up</button>
         </form>
+      
         <p className="login-text">
           Already have an account? <Link to="/login">Login</Link>
         </p>

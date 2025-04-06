@@ -16,11 +16,13 @@
   .it-category {
     margin-top: 40px;
     text-align: center;
+    
   }
   
   .it-category-heading {
     font-size: 24px;
     font-weight: bold;
+    color: white;
     margin-bottom: 20px;
     border-bottom: 2px solid #ccc;
     display: inline-block;

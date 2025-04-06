@@ -18,7 +18,7 @@
 }
 
 .category-card {
-  background-color: #ffffff;
+  background-color: #d3d3d3;
   border: 1px solid #e0e0e0;
   border-radius: 10px;
   text-align: center;
@@ -41,19 +41,19 @@
 
 .category-title {
   font-size: 1.5rem;
-  color: #333333;
+  color: #333;
   margin: 10px 0;
 }
 
 .category-description {
   font-size: 1.2rem;
-  color: #555555;
+  color:#666;
   margin: 10px 0;
 }
 
 .category-courses {
   font-size: 0.9rem;
-  color: #777777;
+  color:#666;
 }
 
 .card-hover {
@@ -88,4 +88,17 @@
   background-color: #007bff;
   border: none;
   border-radius: 5px
+}
+
+/* Responsive Design for Tablets (2 columns) */
+@media (max-width: 1024px) {
+  .category-container {
+    grid-template-columns: repeat(2, 1fr); /* 2 cards per row */
+  }
+}
+
+@media (max-width: 768px) {
+  .category-container {
+    grid-template-columns: 1fr; /* Single column layout */
+  }
 }

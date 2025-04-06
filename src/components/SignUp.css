@@ -41,7 +41,12 @@ h2 {
   outline: none;
   box-shadow: 0px 0px 5px rgba(0, 123, 255, 0.5);
 }
-
+.password-text{
+  margin-top: 15px;
+  margin-bottom: 15px;
+  font-size: 14px;
+  color:  rgb(3, 0, 31);  
+}
 .signup-btn {
   width: 100%;
   padding: 12px;
@@ -65,7 +70,7 @@ h2 {
 }
 
 .login-text a {
-  color:  rgb(3, 0, 31);;
+  color:  rgb(3, 0, 31);
   text-decoration: none;
   font-weight: bold;
 }
