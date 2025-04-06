@@ -1,46 +1,74 @@
 import React from "react";
 import "./ITCourses.css";
+import codecademy from '../assets/codecademy.png'
+import edx from '../assets/edx.jpg'
+import cousera from '../assets/cousera.png'
+import khanacademy from '../assets/khanacademy.png'
+import udemy from '../assets/udemy.png'
+import freecodecamp from '../assets/freecodecamp.png'
+import udacity from   '../assets/udacity.png'
+import odinproject from '../assets/odinproject.png'
+import pluralsight from '../assets/pluralsight.png'
+import treehouse from '../assets/treehouse.png'
+import codeavengers from '../assets/codeavengers.png'
+import codewars from '../assets/codewars.png'
+import sololearn from '../assets/sololearn.png'
+import codeorg from '../assets/codeorg.png'
+import upskill from '../assets/upskill.png'
+import mit from '../assets/mit.png'
+import onemonth from '../assets/onemonth.png'
+import dashGE from '../assets/dashGE.jpg'
+import googledevelopers from '../assets/googledevelopers.png'
+import envatotuts from '../assets/envatotuts.png'
+import linkedin from '../assets/linkedin.png'
+import sitepoint from '../assets/sitepoint.png'
+import coderbyte from '../assets/coderbyte.jpg'
+import edabit from '../assets/edabit.png'
+import  sqlzoo from '../assets/sqlzoo.jpg'
+import geeksforgeeks from '../assets/geeksforgeeks.png'
+import codingbat from '../assets/codingbat.png'
+import codeeasy from '../assets/codeeasy.png'
 
 const platforms = [
   {
     name: "Codecademy",
     link: "https://www.codecademy.com",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/6/6e/Codecademy_Logo_2021.svg",
+    logo: codecademy,
   },
   {
     name: "edX",
     link: "https://www.edx.org",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/0/0e/EdX_logo.svg",
+    logo: edx,
   },
   {
     name: "Coursera",
-    link: "https://www.coursera.org",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/7/70/Coursera_logo.svg",
+    link: "https://www.coursera.org", 
+    logo: cousera,
   },
   {
     name: "Khan Academy",
     link: "https://www.khanacademy.org",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/e/e4/Khan_Academy_logo.svg",
+    logo: khanacademy,
   },
   {
     name: "Udemy",
     link: "https://www.udemy.com",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/5/56/Udemy_Logo.svg",
+    logo: udemy,
   },
   {
     name: "freeCodeCamp",
     link: "https://www.freecodecamp.org",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/3/39/FreeCodeCamp_logo.svg",
+    logo: freecodecamp,
   },
   {
     name: "Udacity",
     link: "https://www.udacity.com",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/e/e4/Udacity_logo.svg",
+    logo: udacity,
   },
   {
     name: "The Odin Project",
     link: "https://www.theodinproject.com",
-    logo: "https://www.theodinproject.com/assets/logo.png",
+    logo: odinproject,
   },
   {
     name: "W3Schools",
@@ -50,97 +78,97 @@ const platforms = [
   {
     name: "Pluralsight",
     link: "https://www.pluralsight.com",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/d/d7/Pluralsight_logo.png",
+    logo: pluralsight,
   },
   {
     name: "Team Treehouse",
     link: "https://teamtreehouse.com",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/3/3b/Team_Treehouse_logo.svg",
+    logo:  treehouse,
   },
   {
     name: "Code Avengers",
     link: "https://www.codeavengers.com",
-    logo: "https://www.codeavengers.com/img/favicon/apple-icon-180x180.png",
+    logo: codeavengers,
   },
   {
     name: "Codewars",
     link: "https://www.codewars.com",
-    logo: "https://www.codewars.com/packs/assets/logo.61192cf7.svg",
+    logo: codewars,
   },
   {
     name: "Sololearn",
     link: "https://www.sololearn.com",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/f/f3/Sololearn_logo.png",
+    logo: sololearn,
   },
   {
     name: "Code.org",
     link: "https://www.code.org",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/3/37/Code.org_logo.svg",
+    logo: codeorg,
   },
   {
     name: "Upskill",
     link: "https://upskillcourses.com",
-    logo: "https://upskillcourses.com/img/upskill-logo.svg",
+    logo: upskill,
   },
   {
     name: "MIT OpenCourseWare",
     link: "https://ocw.mit.edu",
-    logo: "https://ocw.mit.edu/images/logo_mit_ocw.png",
+    logo: mit,
   },
   {
     name: "OneMonth",
     link: "https://www.onemonth.com",
-    logo: "https://www.onemonth.com/assets/logos/onemonth-logo.svg",
+    logo: onemonth,
   },
   {
     name: "Dash, by General Assembly",
     link: "https://dash.generalassemb.ly",
-    logo: "https://dash.generalassemb.ly/favicon.ico",
+    logo: dashGE,
   },
   {
     name: "Learn, by Google Developers",
     link: "https://developers.google.com/learn",
-    logo: "https://www.gstatic.com/devrel-devsite/prod/vc87fba9a2482e2c71c46af0b86643fa050d0f47fa5120e422a1aa57fa6e0a735/developers/images/favicon.png",
+    logo: googledevelopers,
   },
   {
     name: "Envato Tuts+",
     link: "https://tutsplus.com",
-    logo: "https://cdn.tutsplus.com/favicon.ico",
+    logo: envatotuts,
   },
   {
     name: "LinkedIn Learning",
     link: "https://www.linkedin.com/learning",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/e/e0/LinkedIn_Logo.svg",
+    logo: envatotuts,
   },
   {
     name: "SitePoint",
     link: "https://www.sitepoint.com",
-    logo: "https://www.sitepoint.com/wp-content/themes/sitepoint/assets/images/favicon.png",
+    logo: sitepoint,
   },
   {
     name: "Coderbyte",
     link: "https://www.coderbyte.com",
-    logo: "https://coderbyte.com/assets/images/favicons/favicon-96x96.png",
+    logo: coderbyte,
   },
   {
     name: "Edabit",
     link: "https://edabit.com",
-    logo: "https://edabit.com/favicon.ico",
+    logo: edabit,
   },
   {
     name: "SQLZoo",
     link: "https://sqlzoo.net",
-    logo: "https://sqlzoo.net/wiki/images/3/3b/Icon_sqlzoo.gif",
+    logo: sqlzoo,
   },
   {
     name: "GeeksforGeeks",
     link: "https://www.geeksforgeeks.org",
-    logo: "https://www.geeksforgeeks.org/favicon.ico",
+    logo: geeksforgeeks,
   },
   {
     name: "Codingbat",
     link: "https://codingbat.com",
-    logo: "https://codingbat.com/logo.gif",
+    logo: codingbat,
   },
   {
     name: "Bitdegree",
@@ -150,7 +178,7 @@ const platforms = [
   {
     name: "Codeasy",
     link: "https://codeasy.net",
-    logo: "https://codeasy.net/favicon.ico",
+    logo: codeeasy,
   },
 ];
 

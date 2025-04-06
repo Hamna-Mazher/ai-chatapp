@@ -13,7 +13,19 @@
     color: #fff;
     margin-bottom: 20px;
   }
+  .it-category {
+    margin-top: 40px;
+    text-align: center;
+  }
   
+  .it-category-heading {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #ccc;
+    display: inline-block;
+    padding-bottom: 5px;
+  }
   /* Search Bar */
   .it-search-container {
     display: flex;

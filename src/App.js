@@ -7,6 +7,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import ITFields from './components/ITFields';
 import Universities from './components/Universities';
 import  ITCourses from './components/ITCourses';
+import ResumeTemplate from  './components/ResumeTemplate';
 import { ChatProvider } from "./context/Context";
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
         <Route path="/itfields" element={<ITFields />} />
         <Route path="/universities" element={<Universities/>} />
         <Route path="/itcourses" element={<ITCourses/>} />
+        <Route path="/resumetemplate" element={<ResumeTemplate/>}/>
       </Routes>
     </BrowserRouter>
     </ChatProvider>

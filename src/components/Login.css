@@ -1,99 +1,93 @@
-.container{
-    display:flex;
-    flex-direction: column;
-    margin: auto;
-    margin-top: 50px;
-    width: 450px;
-    background: #fff;
-    padding-bottom: 5px;
-} 
- .header{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 9px;
-    width: 100%;
-    margin-top: 30px;
-} 
-.text{
-    color:#3c009d;
-    font-size: 38px;
-    font-weight: 700;
+/* Login Page - Modern UI */
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background:rgb(3, 0, 31);
+  font-family: "Arial", sans-serif;
 }
-.underline{
-width: 61px;
-height: 6px;
-background: #3c009d;
-border-radius: 9px;
+
+.login-box {
+  background: white;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  width: 100%;
+  max-width: 450px;
 
 }
-.inputs{
-    margin-top: 55px;
-    flex-direction: column;
-    display: flex;
-    gap: 25px;
 
+h2 {
+  margin-bottom: 20px;
+  color: #333;
 }
-.input{
-    display: flex;
-    align-items: center;
-    margin: auto;
-    width: 350px;
-    height: 50px;
-    background: #eaeaea;
-    border-radius: 6px;
+
+.input-group {
+  margin-bottom: 15px;
 }
-.input img{
-    margin:0px 30px;
+
+.input-group input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 16px;
+  transition: 0.3s;
 }
-.input input{
-    height: 40px;
-    width: 400px;
-    background: transparent;
-    border: none;
-    outline:none;
-    color:#797979;
-     font-size: 19px;
+
+.input-group input:focus {
+  border-color: #007bff;
+  outline: none;
+  box-shadow: 0px 0px 5px rgba(0, 123, 255, 0.5);
 }
-.forgot-password{
-    padding-left: 52px;
-    margin-top: 27px;
-    color: #797979;
-    font-size: 18px;
+
+.login-btn {
+  width: 100%;
+  padding: 12px;
+  background: rgb(3, 0, 31);
+  color: white;
+  font-size: 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: 0.3s;
 }
-.forgot-password span{
-    color: #4c00b4;
-    cursor: pointer;
+
+.login-btn:hover {
+  background:  rgb(8, 1, 70);
 }
-.submit-container{
-    display: flex;
-    gap: 30px;
-    margin: 20px auto;
+
+.signup-text {
+  margin-top: 15px;
+  font-size: 14px;
+  color: #555;
 }
-.submit-signup{
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 20px 50px;
-    height: 40px;
-    width: 350px;
-    color: #fff;
-    background: #4c00b4;
-    border-radius: 10px ;
-    font-size: 15px;
-    font-weight: 700;
-    cursor: pointer;
+
+.signup-text a {
+  color: rgb(3, 0, 31);
+  text-decoration: none;
+  font-weight: bold;
 }
-.submit{
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 40px;
-    width: 120px;
-    color: #fff;
-    background: #4c00b4;
-    border-radius: 50px ;
-    font-size: 15px;
-    font-weight: 700;
-    cursor: pointer;
+
+.signup-text a:hover {
+  text-decoration: underline;
+}
+
+.error-text {
+  color: red;
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+/* Responsive Design */
+@media (max-width: 500px) {
+  .login-box {
+    padding: 20px;
+  }
+
+  .login-btn {
+    font-size: 14px;
+  }
 }
