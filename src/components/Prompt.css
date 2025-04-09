@@ -9,7 +9,10 @@
     justify-content: center; /* Center horizontally */
     overflow: hidden;
 }
-
+.chatbot {
+    height: 6rem;
+    width:6rem;
+  }
 .background-video {
     position: absolute;
     top: 0;

@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faLock } from "@fortawesome/free-solid-svg-icons";
 import "./SignUp.css";
 
 const SignUp = () => {
@@ -48,6 +50,7 @@ const SignUp = () => {
             <input type="password" name="password" placeholder="Password" value={formData.password} onChange={handleChange} required />
           </div>
           <p className="password-text">
+          <FontAwesomeIcon icon={faLock} className="password" />
           Password must be 8 characters
         </p>
           <button type="submit" className="signup-btn">Sign Up</button>

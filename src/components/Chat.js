@@ -1,4 +1,5 @@
 import React, { useContext, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "./Chat.css";
 import gptLogo from "../assets/chatgpt.svg";
 import chatgptLogo from "../assets/chatgptLogo.svg";
@@ -13,6 +14,7 @@ import menuIcon from "../assets/menuIcon.png";
 import closeIcon from "../assets/closeIcon.png"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUniversity, faBookOpen, faGraduationCap, faFileAlt } from "@fortawesome/free-solid-svg-icons";
+import { faRightFromBracket } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
 import { ChatContext } from "../context/Context";
 import { GROQ_API_URL, GROQ_API_KEY } from "../config/groq";
@@ -76,11 +78,17 @@ const Chat = () => {
       [newId]: [],
     }));
   };
+  const handleLogout = () => {
+  localStorage.clear();      // Clear session/user data
+  navigate("/");             // Redirect to the Prompt page
+};
+
   
     
   
   const [input, setInput] = useState("");
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const navigate = useNavigate();
 
   const handleSend = async () => {
     if (!input.trim()) return;
@@ -232,6 +240,11 @@ const Chat = () => {
           <Link to="/resumetemplate" className="listItems">
             <FontAwesomeIcon icon={faFileAlt} className="listItemsImg" /> Resume Guidance
           </Link>
+          <button className="logoutBtn" onClick={handleLogout}>
+          <FontAwesomeIcon icon={faRightFromBracket} className="addBtn" />
+  Logout
+</button>
+
         </div>
       </div>
       <div className="main">

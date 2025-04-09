@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
+import chatbotImg from "../assets/chatbotImg.png";
 import './Prompt.css';
 import careerVideo from '../assets/career-video.mp4.mp4'; // Add a career counseling video in the project folder
 
@@ -13,7 +14,9 @@ const Prompt = () => {
       </video> 
       <div className="container-prompt">
         <div className="header">
-          <div className="text-prompt">Welcome to CareerIT🚀 </div>
+          <div className="text-prompt">Welcome to CareerIT
+          <img src={chatbotImg} alt="new chat" className="chatbot" />
+             </div>
         </div>
         <div className="forgot-password-prompt">Guiding IT Minds, Shaping Careers.🚀 
         </div>

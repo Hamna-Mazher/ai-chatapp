@@ -23,6 +23,7 @@ function App() {
         <Route path="/universities" element={<Universities/>} />
         <Route path="/itcourses" element={<ITCourses/>} />
         <Route path="/resumetemplate" element={<ResumeTemplate/>}/>
+        
       </Routes>
     </BrowserRouter>
     </ChatProvider>
