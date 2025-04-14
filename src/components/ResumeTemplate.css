@@ -75,19 +75,19 @@ body {
 .ats-section {
   margin-top: 20px;
   padding: 20px;
-  background-color: #d3d3d3;
+  background-color:rgb(6, 2, 44);
   border-radius: 10px;
   text-align: center;
 }
 
 .ats-section h2 {
   font-size: 24px;
-  color:  #222;
+  color: #fff;
 }
 
 .ats-section p {
-  font-size: 16px;
-  color: #555;
+  font-size: 18px;
+  color: #fff;
 }
 
 /* Ats Resume Image example */

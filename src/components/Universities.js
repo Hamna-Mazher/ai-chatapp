@@ -9,11 +9,7 @@ const universitiesByProvince = {
       link: "https://attock.comsats.edu.pk/",
       description: "BS-CS"
     },
-    { 
-      name: "	Lahore College For Women University", 
-      link: "https://www.lcwu.edu.pk/",
-      description: "BS-CS, BS-SE"
-    },
+    
     { 
       name: " Islamia University, Bahawalpur", 
       link: "https://www.iub.edu.pk/",
