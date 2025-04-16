@@ -24,9 +24,10 @@ const SignUp = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const name = formData.name.trim();
-    const email = formData.email.trim();
-    const password = formData.password.trim();
+    const name = (formData.name || "").trim();
+    const email = (formData.email || "").trim();
+    const password = (formData.password || "").trim();
+    
 
     // Log for debugging
     console.log("Form Values →", { name, email, password });
