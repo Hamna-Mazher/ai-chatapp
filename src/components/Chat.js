@@ -71,7 +71,21 @@ const Chat = () => {
     localStorage.removeItem("careerIT_chats");
     navigate("/");
   };
-
+  const saveChat = async (sender, message) => {
+    const token = localStorage.getItem("token");
+    try {
+      await fetch("https://backend-production-6b24.up.railway.app/api/chat/save", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: Bearer ${token},
+        },
+        body: JSON.stringify({ sender, message }),
+      });
+    } catch (err) {
+      console.error("Error saving chat:", err);
+    }
+  };
   const handleSend = async () => {
     if (!input.trim()) return;
 
@@ -93,6 +107,10 @@ const Chat = () => {
     ];
 
     addChat("user", input);
+await saveChat("user", input);
+...
+addChat("bot", formattedResponse);
+await saveChat("bot", formattedResponse)
 
     try {
       const response = await fetch(GROQ_API_URL, {
@@ -128,7 +146,30 @@ const Chat = () => {
     localStorage.setItem("careerIT_sessions", JSON.stringify(sessions));
     localStorage.setItem("careerIT_activeSession", activeSessionId);
   }, [sessions, activeSessionId]);
-
+  useEffect(() => {
+    const fetchChatHistory = async () => {
+      const token = localStorage.getItem("token");
+      try {
+        const res = await fetch("https://backend-production-6b24.up.railway.app/api/chat/history", {
+          headers: {
+            Authorization: Bearer ${token},
+          },
+        });
+  
+        const data = await res.json();
+  
+        // Save all chats from backend into a new session
+        setSessions((prev) => ({
+          ...prev,
+          [activeSessionId]: data,
+        }));
+      } catch (err) {
+        console.error("Error fetching chat history:", err);
+      }
+    };
+  
+    fetchChatHistory();
+  }, []);
   const getUniqueArchivedQuestions = () => {
     const archived = localStorage.getItem("careerIT_archivedSessions");
     if (!archived) return [];
