@@ -6,10 +6,11 @@ import "./SignUp.css";
 
 const SignUp = () => {
   const [formData, setFormData] = useState({
-    name: "",
+    username: "",
     email: "",
     password: "",
   });
+  
 
   const [errors, setErrors] = useState("");
 
@@ -63,7 +64,8 @@ const SignUp = () => {
         {errors && <p className="error-text">{errors}</p>}
         <form onSubmit={handleSubmit}>
           <div className="input-group">
-            <input type="text" name="name" placeholder="Full Name" value={formData.name} onChange={handleChange} required />
+          <input type="text" name="username" placeholder="Full Name" value={formData.username} onChange={handleChange} required />
+
           </div>
           <div className="input-group">
             <input type="email" name="email" placeholder="Email Address" value={formData.email} onChange={handleChange} required />
