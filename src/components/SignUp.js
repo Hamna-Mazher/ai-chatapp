@@ -21,15 +21,27 @@ const SignUp = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
   
-    if (!formData.name || !formData.email || !formData.password) {
+    // Trim input values before validating
+    const name = formData.name.trim();
+    const email = formData.email.trim();
+    const password = formData.password.trim();
+  
+    // Debug log
+    console.log("Form Values:", { name, email, password });
+  
+    // Frontend validation
+    if (!name || !email || !password) {
       setErrors("All fields are required!");
       return;
     }
   
-    if (!/\S+@\S+\.\S+/.test(formData.email)) {
+    if (!/\S+@\S+\.\S+/.test(email)) {
       setErrors("Enter a valid email address!");
       return;
     }
+  
+    // Clear any previous errors
+    setErrors("");
   
     try {
       const response = await fetch("https://backend-production-6b24.up.railway.app/users/signup", {
@@ -37,23 +49,22 @@ const SignUp = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({ name, email, password }),
       });
   
       const data = await response.json();
   
       if (!response.ok) {
-        // Display backend error message if sign-up failed
-        setErrors(data.message || "Something went wrong!");
+        console.error("Signup failed:", data);
+        setErrors(data.message || "Signup failed.");
       } else {
-        // Success 🎉
-        setErrors("");
-        alert("Sign Up Successful! 🚀");
-        // Optionally redirect to login page
+        alert("Signup successful! 🚀");
+        // Reset form if needed
+        setFormData({ name: "", email: "", password: "" });
       }
     } catch (error) {
+      console.error("Network error:", error);
       setErrors("Network error or server is down.");
-      console.error("Error:", error);
     }
   };
   
