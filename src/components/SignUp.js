@@ -17,23 +17,45 @@ const SignUp = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     if (!formData.name || !formData.email || !formData.password) {
       setErrors("All fields are required!");
       return;
     }
-
+  
     if (!/\S+@\S+\.\S+/.test(formData.email)) {
       setErrors("Enter a valid email address!");
       return;
     }
-
-    setErrors("");
-    alert("Sign Up Successful! 🚀 (You can replace this with API call)");
+  
+    try {
+      const response = await fetch("https://backend-production-6b24.up.railway.app/users/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+  
+      const data = await response.json();
+  
+      if (!response.ok) {
+        // Display backend error message if sign-up failed
+        setErrors(data.message || "Something went wrong!");
+      } else {
+        // Success 🎉
+        setErrors("");
+        alert("Sign Up Successful! 🚀");
+        // Optionally redirect to login page
+      }
+    } catch (error) {
+      setErrors("Network error or server is down.");
+      console.error("Error:", error);
+    }
   };
-
+  
   return (
     <div className="signup-container">
       <div className="signup-box">
