@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLock } from "@fortawesome/free-solid-svg-icons";
+import { useNavigate } from "react-router-dom";
 import "./SignUp.css";
 
 const SignUp = () => {
@@ -10,7 +11,7 @@ const SignUp = () => {
     email: "",
     password: "",
   });
-
+  const navigate = useNavigate();
   const [errors, setErrors] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -61,7 +62,9 @@ const SignUp = () => {
         setErrors(data.message || "Signup failed.");
       } else {
         alert("Sign Up Successful! 🎉");
-        setFormData({ fullName: "", email: "", password: "" });
+setFormData({ fullName: "", email: "", password: "" });
+navigate("/chat"); // ✅ redirect user to chat after signup
+
       }
     } catch (error) {
       console.error("Network error:", error);
