@@ -43,6 +43,7 @@ const SignUp = () => {
 
     setErrors("");
     setLoading(true);
+    console.log("📤 Sending to backend →", { fullName, email, password });
 
     try {
       const response = await fetch("https://backend-production-6b24.up.railway.app/users/signup", {
