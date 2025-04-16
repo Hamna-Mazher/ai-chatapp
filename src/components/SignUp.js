@@ -6,7 +6,7 @@ import "./SignUp.css";
 
 const SignUp = () => {
   const [formData, setFormData] = useState({
-    name: "",
+    fullName: "",
     email: "",
     password: "",
   });
@@ -15,24 +15,23 @@ const SignUp = () => {
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value || "",
+    }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const name = (formData.name || "").trim();
+    const fullName = (formData.fullName || "").trim();
     const email = (formData.email || "").trim();
     const password = (formData.password || "").trim();
-    
 
-    // Log for debugging
-    console.log("Form Values →", { name, email, password });
+    console.log("Form Values →", { fullName, email, password });
 
-    if (!name || !email || !password) {
+    if (!fullName || !email || !password) {
       setErrors("All fields are required!");
       return;
     }
@@ -51,19 +50,7 @@ const SignUp = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          fullName: name, // 👈 Fix here!
-          email,
-          password,
-        }),
-      });
-      
-        body: JSON.stringify({
-          fullName: name, // ✅ Backend expects this
-          email,
-          password,
-        }),
-        ,
+        body: JSON.stringify({ fullName, email, password }),
       });
 
       const data = await response.json();
@@ -73,7 +60,7 @@ const SignUp = () => {
         setErrors(data.message || "Signup failed.");
       } else {
         alert("Sign Up Successful! 🎉");
-        setFormData({ name: "", email: "", password: "" });
+        setFormData({ fullName: "", email: "", password: "" });
       }
     } catch (error) {
       console.error("Network error:", error);
@@ -92,9 +79,9 @@ const SignUp = () => {
           <div className="input-group">
             <input
               type="text"
-              name="name"
+              name="fullName"
               placeholder="Full Name"
-              value={formData.name}
+              value={formData.fullName}
               onChange={handleChange}
             />
           </div>
@@ -124,7 +111,6 @@ const SignUp = () => {
             {loading ? "Signing Up..." : "Sign Up"}
           </button>
         </form>
-
         <p className="login-text">
           Already have an account? <Link to="/login">Login</Link>
         </p>
@@ -132,4 +118,5 @@ const SignUp = () => {
     </div>
   );
 };
+
 export default SignUp;
