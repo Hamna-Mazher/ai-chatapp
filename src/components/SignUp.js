@@ -51,7 +51,19 @@ const SignUp = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ name, email, password }),
+        body: JSON.stringify({
+          fullName: name, // 👈 Fix here!
+          email,
+          password,
+        }),
+      });
+      
+        body: JSON.stringify({
+          fullName: name, // ✅ Backend expects this
+          email,
+          password,
+        }),
+        ,
       });
 
       const data = await response.json();
