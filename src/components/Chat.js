@@ -1,5 +1,5 @@
-import React, { useContext, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useContext, useState, useEffect } from "react";
+import { useNavigate, Link } from "react-router-dom";
 import "./Chat.css";
 import gptLogo from "../assets/chatgpt.svg";
 import chatgptLogo from "../assets/chatgptLogo.svg";
@@ -11,27 +11,23 @@ import rocket from "../assets/rocket.svg";
 import sendBtn from "../assets/send.svg";
 import userIcon from "../assets/userIcon.jpg";
 import menuIcon from "../assets/menuIcon.png";
-import closeIcon from "../assets/closeIcon.png"
+import closeIcon from "../assets/closeIcon.png";
 import { marked } from "marked";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUniversity, faBookOpen, faGraduationCap, faFileAlt } from "@fortawesome/free-solid-svg-icons";
-import { faRightFromBracket } from "@fortawesome/free-solid-svg-icons";
-import { Link } from "react-router-dom";
+import {
+  faUniversity,
+  faBookOpen,
+  faGraduationCap,
+  faFileAlt,
+  faRightFromBracket,
+} from "@fortawesome/free-solid-svg-icons";
 import { ChatContext } from "../context/Context";
 import { GROQ_API_URL, GROQ_API_KEY } from "../config/groq";
-import { useEffect } from "react"; // Make sure it's imported at the top
-import { motion } from "framer-motion";
-
-
-// ... (imports unchanged)
-
 
 const Chat = () => {
   const [allChats, setAllChats] = useState(() => {
     const storedChats = localStorage.getItem("careerIT_chats");
-    return storedChats
-      ? JSON.parse(storedChats)
-      : { today: [], yesterday: [] };
+    return storedChats ? JSON.parse(storedChats) : { today: [], yesterday: [] };
   });
 
   const [sessions, setSessions] = useState(() => {
@@ -48,8 +44,7 @@ const Chat = () => {
   const [input, setInput] = useState("");
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const navigate = useNavigate();
- 
-  
+
   const addChat = (sender, message) => {
     const timestamp = new Date().toISOString();
     setSessions((prev) => ({
@@ -74,13 +69,10 @@ const Chat = () => {
     localStorage.removeItem("careerIT_chats");
     navigate("/");
   };
-  
+
   const handleSend = async () => {
     if (!input.trim()) return;
-setShowWelcome(false);
-setWelcomeTypedDone(true);
 
-     
     const formattedChats = chats.map(chat => ({
       role: chat.sender === "bot" ? "assistant" : "user",
       content: chat.message,
@@ -134,7 +126,7 @@ setWelcomeTypedDone(true);
     localStorage.setItem("careerIT_sessions", JSON.stringify(sessions));
     localStorage.setItem("careerIT_activeSession", activeSessionId);
   }, [sessions, activeSessionId]);
- 
+
   const getUniqueArchivedQuestions = () => {
     const archived = localStorage.getItem("careerIT_archivedSessions");
     if (!archived) return [];
@@ -147,27 +139,6 @@ setWelcomeTypedDone(true);
 
     return [...new Set(allUserQuestions)].reverse(); // Unique and latest first
   };
-  const [typedMessage, setTypedMessage] = useState("");
-const [showWelcome, setShowWelcome] = useState(false);
-const [welcomeTypedDone, setWelcomeTypedDone] = useState(false);
-
-useEffect(() => {
-  if (chats.length === 0 && !welcomeTypedDone) {
-    const welcomeText = "👋 Hi! I'm your IT career guide. Ask me anything about fields, universities, courses, or resume tips!";
-    let index = 0;
-    setShowWelcome(true);
-    const interval = setInterval(() => {
-      setTypedMessage(welcomeText.slice(0, index++));
-      if (index > welcomeText.length) {
-        clearInterval(interval);
-        setWelcomeTypedDone(true);
-      }
-    }, 30);
-    return () => clearInterval(interval);
-  }
-}, [chats, welcomeTypedDone]);
-
-  
 
   return (
     <div className="Chat">
@@ -197,8 +168,7 @@ useEffect(() => {
               >
                 <img src={msgIcon} alt="Query" /> Recent
               </button>
-              
-       
+
               {getUniqueArchivedQuestions().slice(0, 5).map((msg, idx) => (
                 <button
                   key={idx}
@@ -238,21 +208,6 @@ useEffect(() => {
 
       <div className="main">
         <div className="chats">
-        {showWelcome && chats.length === 0 && (
-  <motion.div
-    className="chat bot welcome-message"
-    initial={{ opacity: 0, y: 20 }}
-    animate={{ opacity: 1, y: 0 }}
-    transition={{ duration: 0.5 }}
-  >
-    <img className="chatImg" src={chatbotImg} alt="Bot" />
-    <div className="message-content">
-      <p className="txt">{typedMessage}</p>
-    </div>
-  </motion.div>
-)}
-
-
           {chats.map((chat, index) => (
             <div className={`chat ${chat.sender === "bot" ? "bot" : "user"}`} key={index}>
               <img className="chatImg" src={chat.sender === "bot" ? chatbotImg : userIcon} alt="" />
