@@ -171,14 +171,7 @@ const Chat = () => {
               >
                 <img src={msgIcon} alt="Query" /> Recent
               </button>
-              {!hasInteracted && chats.length === 0 && (
-  <div className="chat bot welcome">
-    <img className="chatImg" src={chatbotImg} alt="" />
-    <div className="message-content">
-      <p className="txt"> Hi! I'm your IT career guide. Ask me anything about fields, universities, courses, or resume tips!</p>
-    </div>
-  </div>
-)}
+              
        
               {getUniqueArchivedQuestions().slice(0, 5).map((msg, idx) => (
                 <button
@@ -219,6 +212,14 @@ const Chat = () => {
 
       <div className="main">
         <div className="chats">
+        {!hasInteracted && chats.length === 0 && (
+  <div className="chat bot welcome">
+    <img className="chatImg" src={chatbotImg} alt="" />
+    <div className="message-content">
+      <p className="txt"> Hi! I'm your IT career guide. Ask me anything about fields, universities, courses, or resume tips!</p>
+    </div>
+  </div>
+)}
           {chats.map((chat, index) => (
             <div className={`chat ${chat.sender === "bot" ? "bot" : "user"}`} key={index}>
               <img className="chatImg" src={chat.sender === "bot" ? chatbotImg : userIcon} alt="" />
