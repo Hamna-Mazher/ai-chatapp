@@ -20,6 +20,7 @@ import { Link } from "react-router-dom";
 import { ChatContext } from "../context/Context";
 import { GROQ_API_URL, GROQ_API_KEY } from "../config/groq";
 import { useEffect } from "react"; // Make sure it's imported at the top
+import { motion } from "framer-motion";
 
 
 // ... (imports unchanged)
@@ -213,13 +214,21 @@ const Chat = () => {
       <div className="main">
         <div className="chats">
         {!hasInteracted && chats.length === 0 && (
-  <div className="chat bot welcome">
+  <motion.div
+    className="chat bot welcome-message"
+    initial={{ opacity: 0, y: 10 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.6, ease: "easeOut" }}
+  >
     <img className="chatImg" src={chatbotImg} alt="" />
     <div className="message-content">
-      <p className="txt"> Hi! I'm your IT career guide. Ask me anything about fields, universities, courses, or resume tips!</p>
+      <p className="txt">
+        👋 Hi! I'm your IT career guide. Ask me anything about fields, universities, courses, or resume tips!
+      </p>
     </div>
-  </div>
+  </motion.div>
 )}
+
           {chats.map((chat, index) => (
             <div className={`chat ${chat.sender === "bot" ? "bot" : "user"}`} key={index}>
               <img className="chatImg" src={chat.sender === "bot" ? chatbotImg : userIcon} alt="" />
