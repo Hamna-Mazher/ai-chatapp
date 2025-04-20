@@ -24,9 +24,7 @@ import { motion } from "framer-motion";
 
 
 // ... (imports unchanged)
-const [typedMessage, setTypedMessage] = useState("");
-const [showWelcome, setShowWelcome] = useState(false);
-const [welcomeDone, setWelcomeDone] = useState(false);
+
 
 const Chat = () => {
   const [allChats, setAllChats] = useState(() => {
@@ -50,7 +48,7 @@ const Chat = () => {
   const [input, setInput] = useState("");
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const navigate = useNavigate();
-  const [hasInteracted, setHasInteracted] = useState(() => chats.length > 0);
+ 
   
   const addChat = (sender, message) => {
     const timestamp = new Date().toISOString();
@@ -79,8 +77,9 @@ const Chat = () => {
   
   const handleSend = async () => {
     if (!input.trim()) return;
-    setShowWelcome(false);
-    setWelcomeDone(true); 
+setShowWelcome(false);
+setWelcomeTypedDone(true);
+
      
     const formattedChats = chats.map(chat => ({
       role: chat.sender === "bot" ? "assistant" : "user",
@@ -148,22 +147,25 @@ const Chat = () => {
 
     return [...new Set(allUserQuestions)].reverse(); // Unique and latest first
   };
+  const [typedMessage, setTypedMessage] = useState("");
+const [showWelcome, setShowWelcome] = useState(false);
+const [welcomeTypedDone, setWelcomeTypedDone] = useState(false);
 
-  useEffect(() => {
-  if (chats.length === 0 && !welcomeDone) {
-    const welcomeText = " Hi! I'm your IT career guide. Ask me anything about fields, universities, courses, or resume tips!";
+useEffect(() => {
+  if (chats.length === 0 && !welcomeTypedDone) {
+    const welcomeText = "👋 Hi! I'm your IT career guide. Ask me anything about fields, universities, courses, or resume tips!";
     let index = 0;
     setShowWelcome(true);
     const interval = setInterval(() => {
       setTypedMessage(welcomeText.slice(0, index++));
       if (index > welcomeText.length) {
         clearInterval(interval);
-        setWelcomeDone(true);
+        setWelcomeTypedDone(true);
       }
     }, 30);
     return () => clearInterval(interval);
   }
-}, [chats, welcomeDone]);
+}, [chats, welcomeTypedDone]);
 
   
 
@@ -236,19 +238,20 @@ const Chat = () => {
 
       <div className="main">
         <div className="chats">
-      {showWelcome && chats.length === 0 && (
+        {showWelcome && chats.length === 0 && (
   <motion.div
     className="chat bot welcome-message"
-    initial={{ opacity: 0, y: 10 }}
+    initial={{ opacity: 0, y: 20 }}
     animate={{ opacity: 1, y: 0 }}
     transition={{ duration: 0.5 }}
   >
-    <img className="chatImg" src={chatbotImg} alt="" />
+    <img className="chatImg" src={chatbotImg} alt="Bot" />
     <div className="message-content">
       <p className="txt">{typedMessage}</p>
     </div>
   </motion.div>
 )}
+
 
           {chats.map((chat, index) => (
             <div className={`chat ${chat.sender === "bot" ? "bot" : "user"}`} key={index}>
