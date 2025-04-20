@@ -48,20 +48,7 @@ const Chat = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const navigate = useNavigate();
   const [hasInteracted, setHasInteracted] = useState(() => chats.length > 0);
-  const [typedMessage, setTypedMessage] = useState("");
-
-useEffect(() => {
-  if (!hasInteracted && chats.length === 0) {
-    const welcomeText = " Hi! I'm your IT career guide. Ask me anything about fields, universities, courses, or resume tips!";
-    let index = 0;
-    const interval = setInterval(() => {
-      setTypedMessage(welcomeText.slice(0, index++));
-      if (index > welcomeText.length) clearInterval(interval);
-    }, 25); // typing speed
-    return () => clearInterval(interval);
-  }
-}, [hasInteracted, chats]);
-
+  
   const addChat = (sender, message) => {
     const timestamp = new Date().toISOString();
     setSessions((prev) => ({
@@ -156,6 +143,19 @@ useEffect(() => {
 
     return [...new Set(allUserQuestions)].reverse(); // Unique and latest first
   };
+ const [typedMessage, setTypedMessage] = useState("");
+
+useEffect(() => {
+  if (!hasInteracted && chats.length === 0) {
+    const welcomeText = "👋 Hi! I'm your IT career guide. Ask me anything about fields, universities, courses, or resume tips!";
+    let index = 0;
+    const interval = setInterval(() => {
+      setTypedMessage(welcomeText.slice(0, index++));
+      if (index > welcomeText.length) clearInterval(interval);
+    }, 30);
+    return () => clearInterval(interval);
+  }
+}, [hasInteracted, chats]);
 
   return (
     <div className="Chat">
@@ -226,7 +226,7 @@ useEffect(() => {
 
       <div className="main">
         <div className="chats">
-        {!hasInteracted && chats.length === 0 && (
+       {!hasInteracted && chats.length === 0 && (
   <div className="chat bot welcome-message">
     <img className="chatImg" src={chatbotImg} alt="" />
     <div className="message-content">
@@ -234,7 +234,6 @@ useEffect(() => {
     </div>
   </div>
 )}
-
 
 
           {chats.map((chat, index) => (
