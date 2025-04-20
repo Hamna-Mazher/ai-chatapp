@@ -23,6 +23,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { ChatContext } from "../context/Context";
 import { GROQ_API_URL, GROQ_API_KEY } from "../config/groq";
+import { motion, AnimatePresence } from "framer-motion";
 
 const Chat = () => {
   const [allChats, setAllChats] = useState(() => {
@@ -58,6 +59,7 @@ const Chat = () => {
     setActiveSessionId(newId);
     setSessions((prev) => ({ ...prev, [newId]: [] }));
   };
+  const [showWelcome, setShowWelcome] = useState(true);
 
   const handleLogout = () => {
     const currentSessions = localStorage.getItem("careerIT_sessions");
@@ -69,10 +71,10 @@ const Chat = () => {
     localStorage.removeItem("careerIT_chats");
     navigate("/");
   };
-
   const handleSend = async () => {
     if (!input.trim()) return;
-
+  
+    if (showWelcome) setShowWelcome(false); 
     const formattedChats = chats.map(chat => ({
       role: chat.sender === "bot" ? "assistant" : "user",
       content: chat.message,
@@ -208,6 +210,28 @@ const Chat = () => {
 
       <div className="main">
         <div className="chats">
+        <AnimatePresence>
+  {showWelcome && chats.length === 0 && (
+    <motion.div
+      className="welcome-message"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 1 }}
+    >
+      <motion.p
+        initial={{ width: 0 }}
+        animate={{ width: "fit-content" }}
+        transition={{ duration: 2, ease: "easeInOut" }}
+        className="typing-text"
+      >
+        👋 Hi there! I'm CareerIT, your personal IT career advisor.
+        <br />
+        Ask me anything about IT fields, universities, courses, or resumes!
+      </motion.p>
+    </motion.div>
+  )}
+</AnimatePresence>
           {chats.map((chat, index) => (
             <div className={`chat ${chat.sender === "bot" ? "bot" : "user"}`} key={index}>
               <img className="chatImg" src={chat.sender === "bot" ? chatbotImg : userIcon} alt="" />
