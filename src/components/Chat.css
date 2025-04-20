@@ -217,7 +217,10 @@ body {
   background: #5a4bff;
   color: white;
 }
-
+.chat.welcome {
+  opacity: 0.8;
+  font-style: italic;
+}
 
 
 /* Chatbot Message Styling */
