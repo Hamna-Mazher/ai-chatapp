@@ -60,6 +60,8 @@ const Chat = () => {
     setSessions((prev) => ({ ...prev, [newId]: [] }));
   };
   const [showWelcome, setShowWelcome] = useState(true);
+  const [typedMessage, setTypedMessage] = useState("");
+
 
   const handleLogout = () => {
     const currentSessions = localStorage.getItem("careerIT_sessions");
@@ -141,7 +143,23 @@ const Chat = () => {
 
     return [...new Set(allUserQuestions)].reverse(); // Unique and latest first
   };
-
+  useEffect(() => {
+    if (chats.length === 0 && showWelcome) {
+      const welcomeText =
+        "👋 Hi! I'm your IT career guide. Ask me anything about fields, universities, courses, or resume tips!";
+      let index = 0;
+      const interval = setInterval(() => {
+        setTypedMessage((prev) => prev + welcomeText.charAt(index));
+        index++;
+        if (index > welcomeText.length) {
+          clearInterval(interval);
+        }
+      }, 30); // Adjust typing speed here
+  
+      return () => clearInterval(interval);
+    }
+  }, [chats.length, showWelcome]);
+  
   return (
     <div className="Chat">
       <button className="menuToggle" onClick={() => setSidebarOpen(!sidebarOpen)}>
@@ -211,26 +229,23 @@ const Chat = () => {
       <div className="main">
         <div className="chats">
         <AnimatePresence>
+        <AnimatePresence>
   {showWelcome && chats.length === 0 && (
     <motion.div
-      className="welcome-message"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 1 }}
+      className="chat bot welcome-message"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: 20 }}
+      transition={{ duration: 0.6 }}
     >
-      <motion.p
-        initial={{ width: 0 }}
-        animate={{ width: "fit-content" }}
-        transition={{ duration: 2, ease: "easeInOut" }}
-        className="typing-text"
-      >
-        👋 Hi there! I'm CareerIT, your personal IT career advisor.
-        <br />
-        Ask me anything about IT fields, universities, courses, or resumes!
-      </motion.p>
+      <img className="chatImg" src={chatbotImg} alt="Bot" />
+      <div className="message-content">
+        <p className="txt">{typedMessage}</p>
+      </div>
     </motion.div>
   )}
+</AnimatePresence>
+
 </AnimatePresence>
           {chats.map((chat, index) => (
             <div className={`chat ${chat.sender === "bot" ? "bot" : "user"}`} key={index}>
