@@ -217,7 +217,7 @@ body {
   background: #5a4bff;
   color: white;
 }
-.welcome-message {
+/* .welcome-message {
   display: flex;
   justify-content: center;
   margin-top: 2rem;
@@ -235,7 +235,7 @@ body {
   font-weight: 500;
   color: #333;
   white-space: pre-line;
-}
+} */
 
 /* Chatbot Message Styling */
 .message-content h1,
