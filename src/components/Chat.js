@@ -24,6 +24,8 @@ import { motion } from "framer-motion";
 
 
 // ... (imports unchanged)
+const [typedMessage, setTypedMessage] = useState("");
+const [showWelcome, setShowWelcome] = useState(false);
 
 const Chat = () => {
   const [allChats, setAllChats] = useState(() => {
@@ -76,6 +78,7 @@ const Chat = () => {
   
   const handleSend = async () => {
     if (!input.trim()) return;
+    setShowWelcome(false);
     setHasInteracted(true); 
     const formattedChats = chats.map(chat => ({
       role: chat.sender === "bot" ? "assistant" : "user",
@@ -143,19 +146,22 @@ const Chat = () => {
 
     return [...new Set(allUserQuestions)].reverse(); // Unique and latest first
   };
- const [typedMessage, setTypedMessage] = useState("");
 
-useEffect(() => {
-  if (!hasInteracted && chats.length === 0) {
-    const welcomeText = "👋 Hi! I'm your IT career guide. Ask me anything about fields, universities, courses, or resume tips!";
-    let index = 0;
-    const interval = setInterval(() => {
-      setTypedMessage(welcomeText.slice(0, index++));
-      if (index > welcomeText.length) clearInterval(interval);
-    }, 30);
-    return () => clearInterval(interval);
-  }
-}, [hasInteracted, chats]);
+  useEffect(() => {
+    if (chats.length === 0) {
+      const welcomeText = "👋 Hi! I'm your IT career guide. Ask me anything about fields, universities, courses, or resume tips!";
+      let index = 0;
+      setShowWelcome(true);
+      const interval = setInterval(() => {
+        setTypedMessage(welcomeText.slice(0, index++));
+        if (index > welcomeText.length) {
+          clearInterval(interval);
+        }
+      }, 30);
+      return () => clearInterval(interval);
+    }
+  }, [chats]);
+  
 
   return (
     <div className="Chat">
@@ -226,7 +232,7 @@ useEffect(() => {
 
       <div className="main">
         <div className="chats">
-       {!hasInteracted && chats.length === 0 && (
+       {showWelcome && chats.length === 0 && (
   <div className="chat bot welcome-message">
     <img className="chatImg" src={chatbotImg} alt="" />
     <div className="message-content">
