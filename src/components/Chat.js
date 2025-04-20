@@ -218,16 +218,22 @@ const Chat = () => {
     className="chat bot welcome-message"
     initial={{ opacity: 0, y: 10 }}
     animate={{ opacity: 1, y: 0 }}
-    transition={{ duration: 0.6, ease: "easeOut" }}
+    transition={{ duration: 0.8, ease: "easeOut" }}
   >
     <img className="chatImg" src={chatbotImg} alt="" />
     <div className="message-content">
-      <p className="txt">
-        👋 Hi! I'm your IT career guide. Ask me anything about fields, universities, courses, or resume tips!
-      </p>
+      <motion.p
+        className="txt"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.5, duration: 1.5 }}
+      >
+        👋 Hi! I'm your IT career guide.<br />Ask me anything about fields, universities, courses, or resume tips!
+      </motion.p>
     </div>
   </motion.div>
 )}
+
 
           {chats.map((chat, index) => (
             <div className={`chat ${chat.sender === "bot" ? "bot" : "user"}`} key={index}>
