@@ -48,6 +48,19 @@ const Chat = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const navigate = useNavigate();
   const [hasInteracted, setHasInteracted] = useState(() => chats.length > 0);
+  const [typedMessage, setTypedMessage] = useState("");
+
+useEffect(() => {
+  if (!hasInteracted && chats.length === 0) {
+    const welcomeText = " Hi! I'm your IT career guide. Ask me anything about fields, universities, courses, or resume tips!";
+    let index = 0;
+    const interval = setInterval(() => {
+      setTypedMessage(welcomeText.slice(0, index++));
+      if (index > welcomeText.length) clearInterval(interval);
+    }, 25); // typing speed
+    return () => clearInterval(interval);
+  }
+}, [hasInteracted, chats]);
 
   const addChat = (sender, message) => {
     const timestamp = new Date().toISOString();
@@ -214,25 +227,14 @@ const Chat = () => {
       <div className="main">
         <div className="chats">
         {!hasInteracted && chats.length === 0 && (
-  <motion.div
-    className="chat bot welcome-message"
-    initial={{ opacity: 0, y: 10 }}
-    animate={{ opacity: 1, y: 0 }}
-    transition={{ duration: 0.8, ease: "easeOut" }}
-  >
+  <div className="chat bot welcome-message">
     <img className="chatImg" src={chatbotImg} alt="" />
     <div className="message-content">
-      <motion.p
-        className="txt"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.5, duration: 1.5 }}
-      >
-        👋 Hi! I'm your IT career guide.<br />Ask me anything about fields, universities, courses, or resume tips!
-      </motion.p>
+      <p className="txt">{typedMessage}</p>
     </div>
-  </motion.div>
+  </div>
 )}
+
 
 
           {chats.map((chat, index) => (
