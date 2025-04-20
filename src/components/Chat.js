@@ -26,6 +26,7 @@ import { motion } from "framer-motion";
 // ... (imports unchanged)
 const [typedMessage, setTypedMessage] = useState("");
 const [showWelcome, setShowWelcome] = useState(false);
+const [welcomeDone, setWelcomeDone] = useState(false);
 
 const Chat = () => {
   const [allChats, setAllChats] = useState(() => {
@@ -79,7 +80,8 @@ const Chat = () => {
   const handleSend = async () => {
     if (!input.trim()) return;
     setShowWelcome(false);
-    setHasInteracted(true); 
+    setWelcomeDone(true); 
+     
     const formattedChats = chats.map(chat => ({
       role: chat.sender === "bot" ? "assistant" : "user",
       content: chat.message,
@@ -148,19 +150,21 @@ const Chat = () => {
   };
 
   useEffect(() => {
-    if (chats.length === 0) {
-      const welcomeText = "👋 Hi! I'm your IT career guide. Ask me anything about fields, universities, courses, or resume tips!";
-      let index = 0;
-      setShowWelcome(true);
-      const interval = setInterval(() => {
-        setTypedMessage(welcomeText.slice(0, index++));
-        if (index > welcomeText.length) {
-          clearInterval(interval);
-        }
-      }, 30);
-      return () => clearInterval(interval);
-    }
-  }, [chats]);
+  if (chats.length === 0 && !welcomeDone) {
+    const welcomeText = " Hi! I'm your IT career guide. Ask me anything about fields, universities, courses, or resume tips!";
+    let index = 0;
+    setShowWelcome(true);
+    const interval = setInterval(() => {
+      setTypedMessage(welcomeText.slice(0, index++));
+      if (index > welcomeText.length) {
+        clearInterval(interval);
+        setWelcomeDone(true);
+      }
+    }, 30);
+    return () => clearInterval(interval);
+  }
+}, [chats, welcomeDone]);
+
   
 
   return (
@@ -232,15 +236,19 @@ const Chat = () => {
 
       <div className="main">
         <div className="chats">
-       {showWelcome && chats.length === 0 && (
-  <div className="chat bot welcome-message">
+      {showWelcome && chats.length === 0 && (
+  <motion.div
+    className="chat bot welcome-message"
+    initial={{ opacity: 0, y: 10 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.5 }}
+  >
     <img className="chatImg" src={chatbotImg} alt="" />
     <div className="message-content">
       <p className="txt">{typedMessage}</p>
     </div>
-  </div>
+  </motion.div>
 )}
-
 
           {chats.map((chat, index) => (
             <div className={`chat ${chat.sender === "bot" ? "bot" : "user"}`} key={index}>
