@@ -148,12 +148,13 @@ const Chat = () => {
           </button>
 
           <div className="upperSideBottom">
-            <div className="recent">
+          <div className="recent">
   <button
     className="query-recent-title"
     onClick={() => setShowFullRecent((prev) => !prev)}
   >
-    <img src={msgIcon} alt="Query" /> Recent
+    <img src={msgIcon} alt="Query" />
+    {showFullRecent ? "Show Less" : "Recent"}
   </button>
 
   {(showFullRecent ? archivedQuestions : archivedQuestions.slice(0, 3)).map(
@@ -161,10 +162,45 @@ const Chat = () => {
       <button
         key={idx}
         className="query"
-        onClick={() => {
+        onClick={async () => {
           setInput(msg);
-          addChat("user", msg);
-          handleSend();
+          setShowWelcome(false);
+          const formattedChats = chats.map((chat) => ({
+            role: chat.sender === "bot" ? "assistant" : "user",
+            content: chat.message,
+          }));
+
+          const systemMessage = {
+            role: "system",
+            content:
+              "You are an expert IT career advisor chatbot. You only answer questions related to the field of Information Technology...",
+          };
+
+          const updatedChats = [...formattedChats, { role: "user", content: msg }];
+          await addChat("user", msg);
+
+          try {
+            const response = await fetch(GROQ_API_URL, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${GROQ_API_KEY}`,
+              },
+              body: JSON.stringify({
+                model: "llama3-8b-8192",
+                messages: [systemMessage, ...updatedChats],
+                max_tokens: 1024,
+                temperature: 1,
+              }),
+            });
+
+            const data = await response.json();
+            const botResponse = data?.choices?.[0]?.message?.content;
+            await addChat("bot", botResponse || "Sorry, I couldn't process your request.");
+          } catch (error) {
+            console.error("Error fetching response:", error);
+            await addChat("bot", "An error occurred. Please try again later.");
+          }
         }}
       >
         <img src={msgIcon} alt="Query" /> {msg}
@@ -172,7 +208,6 @@ const Chat = () => {
     )
   )}
 </div>
-
           </div>
         </div>
 
