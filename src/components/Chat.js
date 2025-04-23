@@ -1,13 +1,9 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import "./Chat.css";
-import gptLogo from "../assets/chatgpt.svg";
-import chatgptLogo from "../assets/chatgptLogo.svg";
 import chatbotImg from "../assets/chatbotImg.png";
 import addBtn from "../assets/add-30.png";
 import msgIcon from "../assets/message.svg";
-import saved from "../assets/bookmark.svg";
-import rocket from "../assets/rocket.svg";
 import sendBtn from "../assets/send.svg";
 import userIcon from "../assets/userIcon.jpg";
 import menuIcon from "../assets/menuIcon.png";
@@ -21,80 +17,74 @@ import {
   faFileAlt,
   faRightFromBracket,
 } from "@fortawesome/free-solid-svg-icons";
-import { ChatContext } from "../context/Context";
 import { GROQ_API_URL, GROQ_API_KEY } from "../config/groq";
 import { motion, AnimatePresence } from "framer-motion";
 
 const Chat = () => {
-  const [allChats, setAllChats] = useState(() => {
-    const storedChats = localStorage.getItem("careerIT_chats");
-    return storedChats ? JSON.parse(storedChats) : { today: [], yesterday: [] };
-  });
-
-  const [sessions, setSessions] = useState(() => {
-    const stored = localStorage.getItem("careerIT_sessions");
-    return stored ? JSON.parse(stored) : {};
-  });
-
-  const [activeSessionId, setActiveSessionId] = useState(() => {
-    const stored = localStorage.getItem("careerIT_activeSession");
-    return stored || "session-1";
-  });
-
-  const chats = sessions[activeSessionId] || [];
+  const [chats, setChats] = useState([]);
   const [input, setInput] = useState("");
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const navigate = useNavigate();
-
-  const addChat = (sender, message) => {
-    const timestamp = new Date().toISOString();
-    setSessions((prev) => ({
-      ...prev,
-      [activeSessionId]: [...(prev[activeSessionId] || []), { sender, message, timestamp }],
-    }));
-  };
-
-  const createNewSession = () => {
-    const newId = `session-${Object.keys(sessions).length + 1}`;
-    setActiveSessionId(newId);
-    setSessions((prev) => ({ ...prev, [newId]: [] }));
-  };
   const [showWelcome, setShowWelcome] = useState(true);
   const [typedMessage, setTypedMessage] = useState("");
+  const [archivedQuestions, setArchivedQuestions] = useState([]);
+  const [showFullRecent, setShowFullRecent] = useState(false); // new state
 
+  const navigate = useNavigate();
+
+  const fetchChatHistory = async () => {
+    try {
+      const response = await fetch("https://backend-production-6b24.up.railway.app/api/chat/history");
+      const data = await response.json();
+      setArchivedQuestions(
+        [...new Set(data.filter(chat => chat.sender === "user").map(chat => chat.message))].reverse()
+      );
+    } catch (err) {
+      console.error("Failed to fetch chat history", err);
+    }
+  };
+
+  const saveChatToServer = async (chat) => {
+    try {
+      await fetch("https://backend-production-6b24.up.railway.app/api/chat/save", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(chat),
+      });
+    } catch (err) {
+      console.error("Failed to save chat", err);
+    }
+  };
+
+  const addChat = async (sender, message) => {
+    const timestamp = new Date().toISOString();
+    const newChat = { sender, message, timestamp };
+    setChats((prev) => [...prev, newChat]);
+    await saveChatToServer(newChat);
+  };
 
   const handleLogout = () => {
-    const currentSessions = localStorage.getItem("careerIT_sessions");
-    if (currentSessions) {
-      localStorage.setItem("careerIT_archivedSessions", currentSessions);
-    }
-    localStorage.removeItem("careerIT_sessions");
-    localStorage.removeItem("careerIT_activeSession");
-    localStorage.removeItem("careerIT_chats");
     navigate("/");
   };
+
   const handleSend = async () => {
     if (!input.trim()) return;
-  
-    if (showWelcome) setShowWelcome(false); 
-    const formattedChats = chats.map(chat => ({
+    if (showWelcome) setShowWelcome(false);
+
+    const formattedChats = chats.map((chat) => ({
       role: chat.sender === "bot" ? "assistant" : "user",
       content: chat.message,
     }));
 
     const systemMessage = {
       role: "system",
-      content:
-        "You are an expert IT career advisor chatbot. You only answer questions related to the field of Information Technology...",
+      content: "You are an expert IT career advisor chatbot. You only answer questions related to the field of Information Technology...",
     };
 
-    const updatedChats = [
-      systemMessage,
-      ...formattedChats,
-      { role: "user", content: input },
-    ];
+    const updatedChats = [...formattedChats, { role: "user", content: input }];
 
-    addChat("user", input);
+    await addChat("user", input);
 
     try {
       const response = await fetch(GROQ_API_URL, {
@@ -105,7 +95,7 @@ const Chat = () => {
         },
         body: JSON.stringify({
           model: "llama3-8b-8192",
-          messages: updatedChats,
+          messages: [systemMessage, ...updatedChats],
           max_tokens: 1024,
           temperature: 1,
         }),
@@ -113,53 +103,33 @@ const Chat = () => {
 
       const data = await response.json();
       const botResponse = data?.choices?.[0]?.message?.content;
-      addChat("bot", botResponse || "Sorry, I couldn't process your request.");
+      await addChat("bot", botResponse || "Sorry, I couldn't process your request.");
     } catch (error) {
       console.error("Error fetching response:", error);
-      addChat("bot", "An error occurred. Please try again later.");
+      await addChat("bot", "An error occurred. Please try again later.");
     }
 
     setInput("");
   };
 
   useEffect(() => {
-    localStorage.setItem("careerIT_chats", JSON.stringify(allChats));
-  }, [allChats]);
+    fetchChatHistory();
+  }, []);
 
-  useEffect(() => {
-    localStorage.setItem("careerIT_sessions", JSON.stringify(sessions));
-    localStorage.setItem("careerIT_activeSession", activeSessionId);
-  }, [sessions, activeSessionId]);
-
-  const getUniqueArchivedQuestions = () => {
-    const archived = localStorage.getItem("careerIT_archivedSessions");
-    if (!archived) return [];
-
-    const parsed = JSON.parse(archived);
-    const allUserQuestions = Object.values(parsed)
-      .flat()
-      .filter(chat => chat.sender === "user")
-      .map(chat => chat.message);
-
-    return [...new Set(allUserQuestions)].reverse(); // Unique and latest first
-  };
   useEffect(() => {
     if (chats.length === 0 && showWelcome) {
-      const welcomeText =
-        "👋 Hi! I'm your IT career guide. Ask me anything about fields, universities, courses, or resume tips!";
+      const welcomeText = "👋 Hi! I'm your IT career guide. Ask me anything about fields, universities, courses, or resume tips!";
       let index = 0;
       const interval = setInterval(() => {
         setTypedMessage((prev) => prev + welcomeText.charAt(index));
         index++;
-        if (index > welcomeText.length) {
-          clearInterval(interval);
-        }
-      }, 30); // Adjust typing speed here
-  
+        if (index > welcomeText.length) clearInterval(interval);
+      }, 30);
+
       return () => clearInterval(interval);
     }
   }, [chats.length, showWelcome]);
-  
+
   return (
     <div className="Chat">
       <button className="menuToggle" onClick={() => setSidebarOpen(!sidebarOpen)}>
@@ -169,40 +139,40 @@ const Chat = () => {
       <div className={`sideBar ${sidebarOpen ? "open" : ""}`}>
         <div className="upperSide">
           <div className="upperSideTop">
-            <img src={chatbotImg} alt="" className="logo" />
+            <img src={chatbotImg} alt="logo" className="logo" />
             <span className="brand">CareerIT</span>
           </div>
 
-          <button className="midBtn" onClick={createNewSession}>
+          <button className="midBtn" onClick={() => setChats([])}>
             <img src={addBtn} alt="new chat" className="addBtn" /> New Chat
           </button>
 
           <div className="upperSideBottom">
             <div className="recent">
-              <button
-                className="query-recent-title"
-                onClick={() => {
-                  const recentQuestions = getUniqueArchivedQuestions();
-                  recentQuestions.forEach(q => addChat("user", q));
-                }}
-              >
-                <img src={msgIcon} alt="Query" /> Recent
-              </button>
+  <button
+    className="query-recent-title"
+    onClick={() => setShowFullRecent((prev) => !prev)}
+  >
+    <img src={msgIcon} alt="Query" /> Recent
+  </button>
 
-              {getUniqueArchivedQuestions().slice(0, 5).map((msg, idx) => (
-                <button
-                  key={idx}
-                  className="query"
-                  onClick={() => {
-                    setInput(msg);
-                    addChat("user", msg);
-                    handleSend();
-                  }}
-                >
-                  <img src={msgIcon} alt="Query" /> {msg}
-                </button>
-              ))}
-            </div>
+  {(showFullRecent ? archivedQuestions : archivedQuestions.slice(0, 3)).map(
+    (msg, idx) => (
+      <button
+        key={idx}
+        className="query"
+        onClick={() => {
+          setInput(msg);
+          addChat("user", msg);
+          handleSend();
+        }}
+      >
+        <img src={msgIcon} alt="Query" /> {msg}
+      </button>
+    )
+  )}
+</div>
+
           </div>
         </div>
 
@@ -228,25 +198,23 @@ const Chat = () => {
 
       <div className="main">
         <div className="chats">
-        <AnimatePresence>
-        <AnimatePresence>
-  {showWelcome && chats.length === 0 && (
-    <motion.div
-      className="chat bot welcome-message"
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: 20 }}
-      transition={{ duration: 0.6 }}
-    >
-      <img className="chatImg" src={chatbotImg} alt="Bot" />
-      <div className="message-content">
-        <p className="txt">{typedMessage}</p>
-      </div>
-    </motion.div>
-  )}
-</AnimatePresence>
+          <AnimatePresence>
+            {showWelcome && chats.length === 0 && (
+              <motion.div
+                className="chat bot welcome-message"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 20 }}
+                transition={{ duration: 0.6 }}
+              >
+                <img className="chatImg" src={chatbotImg} alt="Bot" />
+                <div className="message-content">
+                  <p className="txt">{typedMessage}</p>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
-</AnimatePresence>
           {chats.map((chat, index) => (
             <div className={`chat ${chat.sender === "bot" ? "bot" : "user"}`} key={index}>
               <img className="chatImg" src={chat.sender === "bot" ? chatbotImg : userIcon} alt="" />
