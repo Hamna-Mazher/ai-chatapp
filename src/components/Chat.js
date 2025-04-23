@@ -27,7 +27,7 @@ const Chat = () => {
   const [showWelcome, setShowWelcome] = useState(true);
   const [typedMessage, setTypedMessage] = useState("");
   const [archivedQuestions, setArchivedQuestions] = useState([]);
-  const [showFullRecent, setShowFullRecent] = useState(false); // new state
+  const [showFullRecent, setShowFullRecent] = useState(false);
 
   const navigate = useNavigate();
 
@@ -35,9 +35,11 @@ const Chat = () => {
     try {
       const response = await fetch("https://backend-production-6b24.up.railway.app/api/chat/history");
       const data = await response.json();
-      setArchivedQuestions(
-        [...new Set(data.filter(chat => chat.sender === "user").map(chat => chat.message))].reverse()
-      );
+      const userMessages = data
+        .filter(chat => chat.sender === "user")
+        .map(chat => chat.message);
+      const unique = [...new Set(userMessages)];
+      setArchivedQuestions(unique.reverse());
     } catch (err) {
       console.error("Failed to fetch chat history", err);
     }
@@ -47,9 +49,7 @@ const Chat = () => {
     try {
       await fetch("https://backend-production-6b24.up.railway.app/api/chat/save", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(chat),
       });
     } catch (err) {
@@ -68,11 +68,12 @@ const Chat = () => {
     navigate("/");
   };
 
-  const handleSend = async () => {
-    if (!input.trim()) return;
+  const sendMessage = async (msg) => {
+    const userMsg = msg || input;
+    if (!userMsg.trim()) return;
     if (showWelcome) setShowWelcome(false);
 
-    const formattedChats = chats.map((chat) => ({
+    const formattedChats = chats.map(chat => ({
       role: chat.sender === "bot" ? "assistant" : "user",
       content: chat.message,
     }));
@@ -82,9 +83,9 @@ const Chat = () => {
       content: "You are an expert IT career advisor chatbot. You only answer questions related to the field of Information Technology...",
     };
 
-    const updatedChats = [...formattedChats, { role: "user", content: input }];
+    const updatedChats = [...formattedChats, { role: "user", content: userMsg }];
 
-    await addChat("user", input);
+    await addChat("user", userMsg);
 
     try {
       const response = await fetch(GROQ_API_URL, {
@@ -110,6 +111,13 @@ const Chat = () => {
     }
 
     setInput("");
+  };
+
+  const handleSend = () => sendMessage();
+
+  const handleRecentClick = (msg) => {
+    setInput(""); // clear current input
+    sendMessage(msg); // send selected recent question
   };
 
   useEffect(() => {
@@ -148,66 +156,26 @@ const Chat = () => {
           </button>
 
           <div className="upperSideBottom">
-          <div className="recent">
-  <button
-    className="query-recent-title"
-    onClick={() => setShowFullRecent((prev) => !prev)}
-  >
-    <img src={msgIcon} alt="Query" />
-    {showFullRecent ? "Show Less" : "Recent"}
-  </button>
+            <div className="recent">
+              <button
+                className="query-recent-title"
+                onClick={() => setShowFullRecent((prev) => !prev)}
+              >
+                <img src={msgIcon} alt="Query" /> Recent
+              </button>
 
-  {(showFullRecent ? archivedQuestions : archivedQuestions.slice(0, 3)).map(
-    (msg, idx) => (
-      <button
-        key={idx}
-        className="query"
-        onClick={async () => {
-          setInput(msg);
-          setShowWelcome(false);
-          const formattedChats = chats.map((chat) => ({
-            role: chat.sender === "bot" ? "assistant" : "user",
-            content: chat.message,
-          }));
-
-          const systemMessage = {
-            role: "system",
-            content:
-              "You are an expert IT career advisor chatbot. You only answer questions related to the field of Information Technology...",
-          };
-
-          const updatedChats = [...formattedChats, { role: "user", content: msg }];
-          await addChat("user", msg);
-
-          try {
-            const response = await fetch(GROQ_API_URL, {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${GROQ_API_KEY}`,
-              },
-              body: JSON.stringify({
-                model: "llama3-8b-8192",
-                messages: [systemMessage, ...updatedChats],
-                max_tokens: 1024,
-                temperature: 1,
-              }),
-            });
-
-            const data = await response.json();
-            const botResponse = data?.choices?.[0]?.message?.content;
-            await addChat("bot", botResponse || "Sorry, I couldn't process your request.");
-          } catch (error) {
-            console.error("Error fetching response:", error);
-            await addChat("bot", "An error occurred. Please try again later.");
-          }
-        }}
-      >
-        <img src={msgIcon} alt="Query" /> {msg}
-      </button>
-    )
-  )}
-</div>
+              {(showFullRecent ? archivedQuestions : archivedQuestions.slice(0, 3)).map(
+                (msg, idx) => (
+                  <button
+                    key={idx}
+                    className="query"
+                    onClick={() => handleRecentClick(msg)}
+                  >
+                    <img src={msgIcon} alt="Query" /> {msg}
+                  </button>
+                )
+              )}
+            </div>
           </div>
         </div>
 
@@ -251,8 +219,15 @@ const Chat = () => {
           </AnimatePresence>
 
           {chats.map((chat, index) => (
-            <div className={`chat ${chat.sender === "bot" ? "bot" : "user"}`} key={index}>
-              <img className="chatImg" src={chat.sender === "bot" ? chatbotImg : userIcon} alt="" />
+            <div
+              className={`chat ${chat.sender === "bot" ? "bot" : "user"}`}
+              key={index}
+            >
+              <img
+                className="chatImg"
+                src={chat.sender === "bot" ? chatbotImg : userIcon}
+                alt=""
+              />
               <div className="message-content">
                 <p
                   className="txt"
@@ -278,7 +253,7 @@ const Chat = () => {
               placeholder="Send a message"
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              onKeyPress={(e) => e.key === "Enter" && handleSend()}
+              onKeyDown={(e) => e.key === "Enter" && handleSend()}
             />
             <button className="send" onClick={handleSend}>
               <img src={sendBtn} alt="Send" />
