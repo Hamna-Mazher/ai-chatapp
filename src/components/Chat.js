@@ -65,14 +65,15 @@ const Chat = () => {
     localStorage.removeItem("careerIT_activeSession");
     navigate("/");
   };
+  const BACKEND_URL = "https://backend-production-6b24.up.railway.app"; // add this!
 
   const saveChatToBackend = async (sender, message) => {
     try {
-      await fetch("https://backend-production-6b24.up.railway.app/api/chat/save", {
+      await fetch(`${BACKEND_URL}/api/chat/save`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${TOKEN}`,
+          Authorization: `Bearer ${TOKEN}`, // use your token
         },
         body: JSON.stringify({ sender, message }),
       });
@@ -80,27 +81,38 @@ const Chat = () => {
       console.error("Failed to save chat to backend:", error);
     }
   };
-
-  const fetchRecentHistory = async () => {
+  
+  const fetchRecentChats = async () => {
     try {
-      const response = await fetch("https://backend-production-6b24.up.railway.app/api/chat/history", {
+      const response = await fetch(`${BACKEND_URL}/api/chat/history`, {
         headers: {
-          Authorization: `Bearer ${TOKEN}`,
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${TOKEN}`, // use same TOKEN here
         },
       });
+  
+      if (!response.ok) {
+        if (response.status === 401) {
+          console.error("Unauthorized. Invalid token or expired session.");
+        }
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+  
       const data = await response.json();
-      if (data && Array.isArray(data.history)) {
-        const userMessages = data.history
-          .filter((chat) => chat.sender === "user")
-          .map((chat) => chat.message);
-
-        const uniqueMessages = [...new Set(userMessages)].reverse();
-        setRecentQuestions(uniqueMessages.slice(0, 3)); // Only show 3 most recent
+      if (data.success && Array.isArray(data.history)) {
+        const userQuestions = data.history
+          .filter(chat => chat.sender === "user")
+          .map(chat => chat.message)
+          .reverse();
+        const uniqueQuestions = [...new Set(userQuestions)];
+        setRecentQuestions(uniqueQuestions.slice(0, 3)); // show 3 latest
       }
     } catch (error) {
-      console.error("Failed to fetch history:", error);
+      console.error("Failed to fetch recent chats:", error);
     }
   };
+  
+
 
   const handleSend = async () => {
     if (!input.trim()) return;
@@ -156,8 +168,9 @@ const Chat = () => {
   }, [sessions, activeSessionId]);
 
   useEffect(() => {
-    fetchRecentHistory();
+    fetchRecentChats(); // was wrongly written fetchRecentHistory
   }, []);
+  
 
   useEffect(() => {
     if (chats.length === 0 && showWelcome) {
