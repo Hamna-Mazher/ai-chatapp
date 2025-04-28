@@ -25,25 +25,24 @@ import { ChatContext } from "../context/Context";
 import { GROQ_API_URL, GROQ_API_KEY } from "../config/groq";
 import { motion, AnimatePresence } from "framer-motion";
 
-const Chat = () => {
-  const [allChats, setAllChats] = useState(() => {
-    const storedChats = localStorage.getItem("careerIT_chats");
-    return storedChats ? JSON.parse(storedChats) : { today: [], yesterday: [] };
-  });
+// YOUR TOKEN
+const TOKEN = "YOUR_TOKEN_HERE"; // 🔥 Insert your real token here
 
+const Chat = () => {
   const [sessions, setSessions] = useState(() => {
     const stored = localStorage.getItem("careerIT_sessions");
     return stored ? JSON.parse(stored) : {};
   });
-
   const [activeSessionId, setActiveSessionId] = useState(() => {
     const stored = localStorage.getItem("careerIT_activeSession");
     return stored || "session-1";
   });
-
   const chats = sessions[activeSessionId] || [];
   const [input, setInput] = useState("");
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [showWelcome, setShowWelcome] = useState(true);
+  const [typedMessage, setTypedMessage] = useState("");
+  const [recentQuestions, setRecentQuestions] = useState([]);
   const navigate = useNavigate();
 
   const addChat = (sender, message) => {
@@ -52,6 +51,7 @@ const Chat = () => {
       ...prev,
       [activeSessionId]: [...(prev[activeSessionId] || []), { sender, message, timestamp }],
     }));
+    saveChatToBackend(sender, message);
   };
 
   const createNewSession = () => {
@@ -59,24 +59,53 @@ const Chat = () => {
     setActiveSessionId(newId);
     setSessions((prev) => ({ ...prev, [newId]: [] }));
   };
-  const [showWelcome, setShowWelcome] = useState(true);
-  const [typedMessage, setTypedMessage] = useState("");
-
 
   const handleLogout = () => {
-    const currentSessions = localStorage.getItem("careerIT_sessions");
-    if (currentSessions) {
-      localStorage.setItem("careerIT_archivedSessions", currentSessions);
-    }
     localStorage.removeItem("careerIT_sessions");
     localStorage.removeItem("careerIT_activeSession");
-    localStorage.removeItem("careerIT_chats");
     navigate("/");
   };
+
+  const saveChatToBackend = async (sender, message) => {
+    try {
+      await fetch("https://backend-production-6b24.up.railway.app/api/chat/save", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${TOKEN}`,
+        },
+        body: JSON.stringify({ sender, message }),
+      });
+    } catch (error) {
+      console.error("Failed to save chat to backend:", error);
+    }
+  };
+
+  const fetchRecentHistory = async () => {
+    try {
+      const response = await fetch("https://backend-production-6b24.up.railway.app/api/chat/history", {
+        headers: {
+          Authorization: `Bearer ${TOKEN}`,
+        },
+      });
+      const data = await response.json();
+      if (data && Array.isArray(data.history)) {
+        const userMessages = data.history
+          .filter((chat) => chat.sender === "user")
+          .map((chat) => chat.message);
+
+        const uniqueMessages = [...new Set(userMessages)].reverse();
+        setRecentQuestions(uniqueMessages.slice(0, 3)); // Only show 3 most recent
+      }
+    } catch (error) {
+      console.error("Failed to fetch history:", error);
+    }
+  };
+
   const handleSend = async () => {
     if (!input.trim()) return;
-  
-    if (showWelcome) setShowWelcome(false); 
+
+    if (showWelcome) setShowWelcome(false);
     const formattedChats = chats.map(chat => ({
       role: chat.sender === "bot" ? "assistant" : "user",
       content: chat.message,
@@ -84,8 +113,7 @@ const Chat = () => {
 
     const systemMessage = {
       role: "system",
-      content:
-        "You are an expert IT career advisor chatbot. You only answer questions related to the field of Information Technology...",
+      content: "You are an expert IT career advisor chatbot. You only answer questions related to the field of Information Technology...",
     };
 
     const updatedChats = [
@@ -123,26 +151,14 @@ const Chat = () => {
   };
 
   useEffect(() => {
-    localStorage.setItem("careerIT_chats", JSON.stringify(allChats));
-  }, [allChats]);
-
-  useEffect(() => {
     localStorage.setItem("careerIT_sessions", JSON.stringify(sessions));
     localStorage.setItem("careerIT_activeSession", activeSessionId);
   }, [sessions, activeSessionId]);
 
-  const getUniqueArchivedQuestions = () => {
-    const archived = localStorage.getItem("careerIT_archivedSessions");
-    if (!archived) return [];
+  useEffect(() => {
+    fetchRecentHistory();
+  }, []);
 
-    const parsed = JSON.parse(archived);
-    const allUserQuestions = Object.values(parsed)
-      .flat()
-      .filter(chat => chat.sender === "user")
-      .map(chat => chat.message);
-
-    return [...new Set(allUserQuestions)].reverse(); // Unique and latest first
-  };
   useEffect(() => {
     if (chats.length === 0 && showWelcome) {
       const welcomeText =
@@ -154,12 +170,12 @@ const Chat = () => {
         if (index > welcomeText.length) {
           clearInterval(interval);
         }
-      }, 30); // Adjust typing speed here
-  
+      }, 30);
+
       return () => clearInterval(interval);
     }
   }, [chats.length, showWelcome]);
-  
+
   return (
     <div className="Chat">
       <button className="menuToggle" onClick={() => setSidebarOpen(!sidebarOpen)}>
@@ -181,15 +197,12 @@ const Chat = () => {
             <div className="recent">
               <button
                 className="query-recent-title"
-                onClick={() => {
-                  const recentQuestions = getUniqueArchivedQuestions();
-                  recentQuestions.forEach(q => addChat("user", q));
-                }}
+                onClick={fetchRecentHistory}
               >
                 <img src={msgIcon} alt="Query" /> Recent
               </button>
 
-              {getUniqueArchivedQuestions().slice(0, 5).map((msg, idx) => (
+              {recentQuestions.map((msg, idx) => (
                 <button
                   key={idx}
                   className="query"
@@ -228,25 +241,23 @@ const Chat = () => {
 
       <div className="main">
         <div className="chats">
-        <AnimatePresence>
-        <AnimatePresence>
-  {showWelcome && chats.length === 0 && (
-    <motion.div
-      className="chat bot welcome-message"
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: 20 }}
-      transition={{ duration: 0.6 }}
-    >
-      <img className="chatImg" src={chatbotImg} alt="Bot" />
-      <div className="message-content">
-        <p className="txt">{typedMessage}</p>
-      </div>
-    </motion.div>
-  )}
-</AnimatePresence>
+          <AnimatePresence>
+            {showWelcome && chats.length === 0 && (
+              <motion.div
+                className="chat bot welcome-message"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 20 }}
+                transition={{ duration: 0.6 }}
+              >
+                <img className="chatImg" src={chatbotImg} alt="Bot" />
+                <div className="message-content">
+                  <p className="txt">{typedMessage}</p>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
-</AnimatePresence>
           {chats.map((chat, index) => (
             <div className={`chat ${chat.sender === "bot" ? "bot" : "user"}`} key={index}>
               <img className="chatImg" src={chat.sender === "bot" ? chatbotImg : userIcon} alt="" />
