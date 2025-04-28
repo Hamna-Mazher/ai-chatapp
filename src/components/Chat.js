@@ -25,9 +25,6 @@ import { ChatContext } from "../context/Context";
 import { GROQ_API_URL, GROQ_API_KEY } from "../config/groq";
 import { motion, AnimatePresence } from "framer-motion";
 
-// YOUR TOKEN
-const TOKEN = "YOUR_TOKEN_HERE"; // 🔥 Insert your real token here
-
 const Chat = () => {
   const [sessions, setSessions] = useState(() => {
     const stored = localStorage.getItem("careerIT_sessions");
@@ -65,35 +62,45 @@ const Chat = () => {
     localStorage.removeItem("careerIT_activeSession");
     navigate("/");
   };
-  const BACKEND_URL = "https://backend-production-6b24.up.railway.app"; // add this!
-
+  const BACKEND_URL = "https://backend-production-6b24.up.railway.app";
+  const TOKEN = localStorage.getItem("token"); // dynamically get from storage
+  
   const saveChatToBackend = async (sender, message) => {
+    if (!TOKEN) {
+      console.error("No token available.");
+      return;
+    }
     try {
       await fetch(`${BACKEND_URL}/api/chat/save`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${TOKEN}`, // use your token
+          Authorization: `Bearer ${TOKEN}`,
         },
         body: JSON.stringify({ sender, message }),
       });
     } catch (error) {
-      console.error("Failed to save chat to backend:", error);
+      console.error("Failed to save chat:", error);
     }
   };
   
   const fetchRecentChats = async () => {
+    if (!TOKEN) {
+      console.error("No token available.");
+      return;
+    }
     try {
       const response = await fetch(`${BACKEND_URL}/api/chat/history`, {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${TOKEN}`, // use same TOKEN here
+          Authorization: `Bearer ${TOKEN}`,
         },
       });
   
       if (!response.ok) {
         if (response.status === 401) {
-          console.error("Unauthorized. Invalid token or expired session.");
+          console.error("Unauthorized. Please login again.");
+          // maybe redirect to login page
         }
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -105,12 +112,13 @@ const Chat = () => {
           .map(chat => chat.message)
           .reverse();
         const uniqueQuestions = [...new Set(userQuestions)];
-        setRecentQuestions(uniqueQuestions.slice(0, 3)); // show 3 latest
+        setRecentQuestions(uniqueQuestions.slice(0, 3));
       }
     } catch (error) {
-      console.error("Failed to fetch recent chats:", error);
+      console.error("Failed to fetch history:", error);
     }
   };
+  
   
 
 
