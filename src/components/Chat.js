@@ -49,7 +49,9 @@ const Chat = () => {
       [activeSessionId]: [...(prev[activeSessionId] || []), { sender, message, timestamp }],
     }));
     saveChatToBackend(sender, message);
+    if (sender === "user") fetchRecentChats();
   };
+  
 
   const createNewSession = () => {
     const newId = `session-${Object.keys(sessions).length + 1}`;
@@ -231,9 +233,9 @@ const Chat = () => {
                   className="query"
                   onClick={() => {
                     setInput(msg);
-                    addChat("user", msg);
-                    handleSend();
+                    setTimeout(() => handleSend(), 0);
                   }}
+                  
                 >
                   <img src={msgIcon} alt="Query" /> {msg}
                 </button>
