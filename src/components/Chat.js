@@ -99,6 +99,8 @@ const Chat = () => {
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
 
       const data = await response.json();
+      console.log("Fetched chat history:", data);
+
       if (data.success && Array.isArray(data.history)) {
         const userQuestions = data.history
           .filter(chat => chat.sender === "user")
