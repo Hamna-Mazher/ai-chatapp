@@ -1,4 +1,3 @@
-// Chat.js
 import React, { useContext, useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import "./Chat.css";
@@ -42,7 +41,6 @@ const Chat = () => {
   const [typedMessage, setTypedMessage] = useState("");
   const [recentQuestions, setRecentQuestions] = useState([]);
   const navigate = useNavigate();
-  const BACKEND_URL = "https://backend-production-6b24.up.railway.app";
 
   const addChat = (sender, message) => {
     const timestamp = new Date().toISOString();
@@ -53,6 +51,7 @@ const Chat = () => {
     saveChatToBackend(sender, message);
     if (sender === "user") fetchRecentChats();
   };
+  
 
   const createNewSession = () => {
     const newId = `session-${Object.keys(sessions).length + 1}`;
@@ -65,11 +64,15 @@ const Chat = () => {
     localStorage.removeItem("careerIT_activeSession");
     navigate("/");
   };
+  const BACKEND_URL = "https://backend-production-6b24.up.railway.app";
 
+  
   const saveChatToBackend = async (sender, message) => {
     const token = localStorage.getItem("token");
-    if (!token) return;
-
+    if (!token) {
+      console.error("No token available.");
+      return;
+    }
     try {
       await fetch(`${BACKEND_URL}/api/chat/save`, {
         method: "POST",
@@ -83,11 +86,14 @@ const Chat = () => {
       console.error("Failed to save chat:", error);
     }
   };
-
+  
+  
   const fetchRecentChats = async () => {
     const token = localStorage.getItem("token");
-    if (!token) return;
-
+    if (!token) {
+      console.error("No token available.");
+      return;
+    }
     try {
       const response = await fetch(`${BACKEND_URL}/api/chat/history`, {
         headers: {
@@ -95,11 +101,15 @@ const Chat = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-
-      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-
+  
+      if (!response.ok) {
+        if (response.status === 401) {
+          console.error("Unauthorized. Please login again.");
+        }
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+  
       const data = await response.json();
-      console.log("Fetched chat history:", data);
       if (data.success && Array.isArray(data.history)) {
         const userQuestions = data.history
           .filter(chat => chat.sender === "user")
@@ -112,13 +122,14 @@ const Chat = () => {
       console.error("Failed to fetch history:", error);
     }
   };
+  
+  
 
-  const handleSend = async (overrideInput) => {
-    const userInput = overrideInput ?? input;
-    if (!userInput.trim()) return;
+
+  const handleSend = async () => {
+    if (!input.trim()) return;
 
     if (showWelcome) setShowWelcome(false);
-
     const formattedChats = chats.map(chat => ({
       role: chat.sender === "bot" ? "assistant" : "user",
       content: chat.message,
@@ -132,10 +143,10 @@ const Chat = () => {
     const updatedChats = [
       systemMessage,
       ...formattedChats,
-      { role: "user", content: userInput },
+      { role: "user", content: input },
     ];
 
-    addChat("user", userInput);
+    addChat("user", input);
 
     try {
       const response = await fetch(GROQ_API_URL, {
@@ -169,8 +180,9 @@ const Chat = () => {
   }, [sessions, activeSessionId]);
 
   useEffect(() => {
-    fetchRecentChats();
+    fetchRecentChats(); // was wrongly written fetchRecentHistory
   }, []);
+  
 
   useEffect(() => {
     if (chats.length === 0 && showWelcome) {
@@ -208,7 +220,10 @@ const Chat = () => {
 
           <div className="upperSideBottom">
             <div className="recent">
-              <button className="query-recent-title" onClick={fetchRecentChats}>
+              <button
+                className="query-recent-title"
+                onClick={fetchRecentChats}
+              >
                 <img src={msgIcon} alt="Query" /> Recent
               </button>
 
@@ -216,7 +231,11 @@ const Chat = () => {
                 <button
                   key={idx}
                   className="query"
-                  onClick={() => handleSend(msg)} // 🔥 Key fix here
+                  onClick={() => {
+                    setInput(msg);
+                    setTimeout(() => handleSend(), 0);
+                  }}
+                  
                 >
                   <img src={msgIcon} alt="Query" /> {msg}
                 </button>
@@ -294,7 +313,7 @@ const Chat = () => {
               onChange={(e) => setInput(e.target.value)}
               onKeyPress={(e) => e.key === "Enter" && handleSend()}
             />
-            <button className="send" onClick={() => handleSend()}>
+            <button className="send" onClick={handleSend}>
               <img src={sendBtn} alt="Send" />
             </button>
           </div>
