@@ -86,8 +86,11 @@ const Chat = () => {
 
   const fetchRecentChats = async () => {
     const token = localStorage.getItem("token");
-    if (!token) return;
-
+    if (!token) {
+      console.error("No token available.");
+      return;
+    }
+  
     try {
       const response = await fetch(`${BACKEND_URL}/api/chat/history`, {
         headers: {
@@ -95,24 +98,39 @@ const Chat = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-
-      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-
+  
       const data = await response.json();
       console.log("Fetched chat history:", data);
-
+  
       if (data.success && Array.isArray(data.history)) {
         const userQuestions = data.history
-          .filter(chat => chat.sender === "user")
+          .filter(chat => chat.sender === "user" && chat.message)
           .map(chat => chat.message)
           .reverse();
+  
         const uniqueQuestions = [...new Set(userQuestions)];
         setRecentQuestions(uniqueQuestions.slice(0, 3));
+  
+        // Show full chat history in new session
+        const sessionId = `recent-session`;
+        const formatted = data.history.map(chat => ({
+          sender: chat.sender,
+          message: chat.message,
+          timestamp: new Date().toISOString(),
+        }));
+  
+        setSessions(prev => ({
+          ...prev,
+          [sessionId]: formatted,
+        }));
+        setActiveSessionId(sessionId);
+        setShowWelcome(false);
       }
     } catch (error) {
       console.error("Failed to fetch history:", error);
     }
   };
+  
 
   const handleSend = async (overrideInput) => {
     const userInput = overrideInput ?? input;
