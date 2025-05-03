@@ -218,7 +218,7 @@ const Chat = () => {
             <div className="recent">
               <button
                 className="query-recent-title"
-                onClick={fetchRecentHistory}
+                onClick={fetchRecentChats}
               >
                 <img src={msgIcon} alt="Query" /> Recent
               </button>
