@@ -38,7 +38,8 @@ const Login = () => {
       });
 
       const data = await response.json();
-console.log("Login response:", data); // ← Add this here
+console.log("Login response:", data); // ✅ Add this line to inspect response
+
 
       if (!response.ok) {
         setErrors(data.message || "Login failed. Please try again.");
