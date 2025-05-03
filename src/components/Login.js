@@ -45,7 +45,7 @@ const Login = () => {
         setErrors("");
         alert("Login Successful! 🚀");
         // Optional: Store token if your backend returns one
-        // localStorage.setItem("token", data.token);
+         localStorage.setItem("token", data.token);
         navigate("/chat"); // Redirect to chat
       }
     } catch (error) {
