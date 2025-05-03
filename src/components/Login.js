@@ -44,10 +44,13 @@ const Login = () => {
       } else {
         setErrors("");
         alert("Login Successful! 🚀");
-        // Optional: Store token if your backend returns one
-         localStorage.setItem("token", data.token);
-        navigate("/chat"); // Redirect to chat
+      
+        // ✅ Save token to localStorage
+        localStorage.setItem("token", data.token);
+      
+        navigate("/chat");
       }
+      
     } catch (error) {
       setErrors("Network error. Please try again later.");
       console.error("Login error:", error);
