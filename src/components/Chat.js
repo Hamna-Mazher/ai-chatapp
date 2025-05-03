@@ -63,10 +63,11 @@ const Chat = () => {
     navigate("/");
   };
   const BACKEND_URL = "https://backend-production-6b24.up.railway.app";
-  const TOKEN = localStorage.getItem("token"); // dynamically get from storage
+
   
   const saveChatToBackend = async (sender, message) => {
-    if (!TOKEN) {
+    const token = localStorage.getItem("token");
+    if (!token) {
       console.error("No token available.");
       return;
     }
@@ -75,7 +76,7 @@ const Chat = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${TOKEN}`,
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ sender, message }),
       });
@@ -84,8 +85,10 @@ const Chat = () => {
     }
   };
   
+  
   const fetchRecentChats = async () => {
-    if (!TOKEN) {
+    const token = localStorage.getItem("token");
+    if (!token) {
       console.error("No token available.");
       return;
     }
@@ -93,14 +96,13 @@ const Chat = () => {
       const response = await fetch(`${BACKEND_URL}/api/chat/history`, {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${TOKEN}`,
+          Authorization: `Bearer ${token}`,
         },
       });
   
       if (!response.ok) {
         if (response.status === 401) {
           console.error("Unauthorized. Please login again.");
-          // maybe redirect to login page
         }
         throw new Error(`HTTP error! status: ${response.status}`);
       }
