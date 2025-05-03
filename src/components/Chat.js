@@ -100,7 +100,6 @@ const Chat = () => {
 
       const data = await response.json();
       console.log("Fetched chat history:", data);
-
       if (data.success && Array.isArray(data.history)) {
         const userQuestions = data.history
           .filter(chat => chat.sender === "user")
