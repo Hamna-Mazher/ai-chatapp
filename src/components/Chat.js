@@ -49,7 +49,6 @@ const Chat = () => {
       [activeSessionId]: [...(prev[activeSessionId] || []), { sender, message, timestamp }],
     }));
     saveChatToBackend(sender, message);
-    if (sender === "user") fetchRecentChats();
   };
   
 
@@ -57,8 +56,9 @@ const Chat = () => {
     const newId = `session-${Object.keys(sessions).length + 1}`;
     setActiveSessionId(newId);
     setSessions((prev) => ({ ...prev, [newId]: [] }));
+    setRecentQuestions([]); // 👈 Clears recent questions
   };
-
+  
   const handleLogout = () => {
     localStorage.removeItem("careerIT_sessions");
     localStorage.removeItem("careerIT_activeSession");
@@ -192,11 +192,6 @@ const Chat = () => {
     localStorage.setItem("careerIT_sessions", JSON.stringify(sessions));
     localStorage.setItem("careerIT_activeSession", activeSessionId);
   }, [sessions, activeSessionId]);
-
-  useEffect(() => {
-    fetchRecentChats(); // was wrongly written fetchRecentHistory
-  }, []);
-  
 
   useEffect(() => {
     if (chats.length === 0 && showWelcome) {
