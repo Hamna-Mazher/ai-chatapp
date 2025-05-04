@@ -88,40 +88,45 @@ const Chat = () => {
   };
   
   
-  const fetchRecentChats = async () => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      console.error("No token available.");
-      return;
-    }
-    try {
-      const response = await fetch(`${BACKEND_URL}/api/chat/history`, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
-  
-      if (!response.ok) {
-        if (response.status === 401) {
-          console.error("Unauthorized. Please login again.");
-        }
-        throw new Error(`HTTP error! status: ${response.status}`);
+const fetchRecentChats = async () => {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    console.error("No token available.");
+    return;
+  }
+  try {
+    const response = await fetch(`${BACKEND_URL}/api/chat/history`, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      if (response.status === 401) {
+        console.error("Unauthorized. Please login again.");
       }
-  
-      const data = await response.json();
-      if (data.success && Array.isArray(data.history)) {
-        const userQuestions = data.history
-          .filter(chat => chat.sender === "user")
-          .map(chat => chat.message)
-          .reverse();
-        const uniqueQuestions = [...new Set(userQuestions)];
-        setRecentQuestions(uniqueQuestions.slice(0, 3));
-      }
-    } catch (error) {
-      console.error("Failed to fetch history:", error);
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
-  };
+
+    const history = await response.json(); // NOT assuming it's { success, history }
+
+    if (Array.isArray(history)) {
+      const userQuestions = history
+        .filter(chat => chat.sender === "user")
+        .map(chat => chat.message)
+        .reverse();
+
+      const uniqueQuestions = [...new Set(userQuestions)];
+      setRecentQuestions(uniqueQuestions.slice(0, 3));
+    } else {
+      console.error("Invalid history format from backend.");
+    }
+  } catch (error) {
+    console.error("Failed to fetch history:", error);
+  }
+};
+
   
   
 
