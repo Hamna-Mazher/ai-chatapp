@@ -88,49 +88,58 @@ const Chat = () => {
   };
   
   
-const fetchRecentChats = async () => {
-  const token = localStorage.getItem("token");
-  if (!token) {
-    console.error("No token available.");
-    return;
-  }
-  try {
-    const response = await fetch(`${BACKEND_URL}/api/chat/history`, {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    if (!response.ok) {
-      if (response.status === 401) {
-        console.error("Unauthorized. Please login again.");
+  const fetchRecentChats = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      console.error("No token available.");
+      return;
+    }
+    try {
+      const response = await fetch(`${BACKEND_URL}/api/chat/history`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+  
+      if (!response.ok) {
+        if (response.status === 401) {
+          console.error("Unauthorized. Please login again.");
+        }
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    const history = await response.json(); // NOT assuming it's { success, history }
-
-    if (Array.isArray(history)) {
-      const userQuestions = history
-        .filter(chat => chat.sender === "user")
-        .map(chat => chat.message)
-        .reverse();
-
-      const uniqueQuestions = [...new Set(userQuestions)];
-      setRecentQuestions(uniqueQuestions.slice(0, 3));
-    } else {
-      console.error("Invalid history format from backend.");
-    }
-  } catch (error) {
-    console.error("Failed to fetch history:", error);
-  }
-};
-
   
+      const history = await response.json();
   
-
-
+      if (Array.isArray(history)) {
+        // Load into current session
+        const timestamped = history.map((msg) => ({
+          ...msg,
+          timestamp: new Date().toISOString(),
+        }));
+  
+        setSessions(prev => ({
+          ...prev,
+          [activeSessionId]: timestamped,
+        }));
+        setShowWelcome(false);
+  
+        // Show top 3 recent user questions
+        const userQuestions = history
+          .filter(chat => chat.sender === "user")
+          .map(chat => chat.message)
+          .reverse();
+  
+        const uniqueQuestions = [...new Set(userQuestions)];
+        setRecentQuestions(uniqueQuestions.slice(0, 3));
+      } else {
+        console.error("Invalid history format from backend.");
+      }
+    } catch (error) {
+      console.error("Failed to fetch history:", error);
+    }
+  };
+  
   const handleSend = async () => {
     if (!input.trim()) return;
 
@@ -205,6 +214,17 @@ const fetchRecentChats = async () => {
       return () => clearInterval(interval);
     }
   }, [chats.length, showWelcome]);
+const getBotResponseFromHistory = (userMsg) => {
+  const token = localStorage.getItem("token");
+  const chat = JSON.parse(localStorage.getItem("careerIT_sessions")) || {};
+  const allMsgs = Object.values(chat).flat();
+  const match = allMsgs.find((item, idx) =>
+    item.sender === "user" &&
+    item.message === userMsg &&
+    allMsgs[idx + 1]?.sender === "bot"
+  );
+  return match ? allMsgs[allMsgs.indexOf(match) + 1].message : "Previous response not found.";
+};
 
   return (
     <div className="Chat">
@@ -236,10 +256,19 @@ const fetchRecentChats = async () => {
                 <button
                   key={idx}
                   className="query"
-                  onClick={() => {
-                    setInput(msg);
-                    setTimeout(() => handleSend(), 0);
-                  }}
+                 onClick={() => {
+  setShowWelcome(false);
+  const timestamp = new Date().toISOString();
+  setSessions(prev => ({
+    ...prev,
+    [activeSessionId]: [
+      ...(prev[activeSessionId] || []),
+      { sender: "user", message: msg, timestamp },
+      { sender: "bot", message: getBotResponseFromHistory(msg), timestamp },
+    ],
+  }));
+}}
+
                   
                 >
                   <img src={msgIcon} alt="Query" /> {msg}
