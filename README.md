@@ -46,7 +46,6 @@ CareerIT is a web-based platform designed to assist IT students in making well-i
 ```bash
 cd client
 npm install
-npm run dev
 ```
 
 ### Production Build
@@ -62,22 +61,6 @@ npm run build
 ```bash
 cd server
 npm install
-npm run dev
-```
-
-Or using nodemon:
-
-```bash
-nodemon index.js
-```
-
-> **Note:** Create a `.env` file in the `server/` directory with required environment variables:
-
-```env
-PORT=5000
-JWT_SECRET=your_jwt_secret
-GROQ_API_KEY=your_groq_api_key
-MONGODB_URI=your_mongo_uri
 ```
 
 ---
@@ -102,7 +85,6 @@ MONGODB_URI=your_mongo_uri
 
 | Command         | Location      | Description                      |
 | --------------- | ------------- | -------------------------------- |
-| `npm run dev`   | Client/Server | Runs the app in development mode |
 | `npm run build` | Client        | Builds the app for production    |
 | `npm start`     | Server        | Starts the backend server (prod) |
 
