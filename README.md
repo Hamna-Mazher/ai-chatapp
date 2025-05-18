@@ -1,90 +1,133 @@
-🎓 CareerIT – Empowering IT Students to Shape Their Future
-CareerIT is a web-based platform designed to assist IT students in making well-informed career decisions. It offers AI-powered career guidance based on individual interests and skills, helps students discover educational pathways (including universities in Pakistan and online courses), and provides  resume building support.
-🚀 Tech Stack
-Frontend: React.js, React Router
+# 🎓 CareerIT – Empowering IT Students to Shape Their Future
 
-Backend: Node.js, Express.js, JWT Authentication
+CareerIT is a web-based platform designed to assist IT students in making well-informed career decisions. It offers AI-powered career guidance based on individual interests and skills, helps students discover educational pathways (including universities in Pakistan and online courses), and provides resume building support.
 
-Database: MongoD(BHosted on MongoDB Atlas)
-Deployment:
+---
 
-Frontend: Vercel
+## 🚀 Tech Stack
 
-Backend: Railway
+* **Frontend**: React.js, React Router
+* **Backend**: Node.js, Express.js, JWT Authentication
+* **Chatbot**: Groq API (LLM-based conversational assistant)
+* **Database**: MongoDB (Hosted on MongoDB Atlas)
+* **Deployment**:
 
-✨ Features
-🎯 Personalized Career Recommendations (based on skills and interests)
+  * **Frontend**: [Vercel](https://vercel.com/)
+  * **Backend**: [Railway](https://railway.app/)
 
-🧑‍🎓 University & Online Course Listings (focused on Pakistan)
+---
 
-🧾 Career-Specific Resume Guidance
+## ✨ Features
 
-💬 Interactive AI Chatbot for Career Queries
+* 🎯 Personalized Career Recommendations (based on skills and interests)
+* 🧑‍🎓 University & Online Course Listings (focused on Pakistan)
+* 🧾 Career-Specific Resume Guidance
+* 💬 Interactive AI Chatbot for Career Queries (powered by Groq API)
+* 🕓 Chat History and Recent Questions Memory
+* 🔐 User Authentication (JWT)
+* 🎨 Responsive UI with Modern Design
+* 🔍 Field-Specific Insights and Roadmaps
 
-🕓 Chat History and Recent Questions Memory
+---
 
-🔐 User Authentication (JWT)
+## 💻 Getting Started
 
-🎨 Responsive UI with Modern Design
+### Prerequisites
 
-🔍 Field-Specific Insights and Roadmaps
+* Node.js and npm installed
+* MongoDB Atlas URI
+* Groq API key
+* Vercel & Railway accounts for deployment
 
-💻 Getting Started
-Prerequisites
-Node.js and npm installed
+---
 
-MongoDB Atlas URI 
-Vercel & Railway accounts for deployment
+## 🔧 Frontend Setup (Client)
 
-🔧 Frontend Setup (Client)
-bash
+```bash
+cd client
 npm install
 npm run dev
-Production Build
-bash
+```
+
+### Production Build
+
+```bash
 npm run build
-🔧 Backend Setup (Server)
-bash
+```
+
+---
+
+## 🔧 Backend Setup (Server)
+
+```bash
+cd server
 npm install
 npm run dev
+```
+
+Or using nodemon:
+
+```bash
 nodemon index.js
-🔗 Deployment
-Frontend on Vercel
+```
 
-Connect your GitHub repo
+> **Note:** Create a `.env` file in the `server/` directory with required environment variables:
 
-Set build command: npm run build
+```env
+PORT=5000
+JWT_SECRET=your_jwt_secret
+GROQ_API_KEY=your_groq_api_key
+MONGODB_URI=your_mongo_uri
+```
 
-Output directory: build
+---
 
-Backend on Railway
+## 🔗 Deployment
 
-Create a new project and link GitHub repo
+### Frontend on Vercel
 
-Set environment variables in the dashboard
+* Connect your GitHub repo
+* Set build command: `npm run build`
+* Output directory: `build`
 
-Deploy and copy the backend API URL for frontend integration
+### Backend on Railway
 
-✅ Available Commands
-Command	Location	Description
-npm run dev	Client/Server	Runs the app in development mode
-npm run build	Client	Builds the app for production
-npm start	Server	Starts the backend server (prod)
+* Create a new project and link your GitHub repo
+* Add environment variables in the Railway dashboard
+* Deploy and copy the backend API URL for frontend integration
 
-🔮 Future Enhancements
-🧭 Add listing for internships and jobs
+---
 
-🧑‍🏫 Mentor Matching System
+## ✅ Available Commands
 
-🗂️ Resume Templates by Career Path
+| Command         | Location      | Description                      |
+| --------------- | ------------- | -------------------------------- |
+| `npm run dev`   | Client/Server | Runs the app in development mode |
+| `npm run build` | Client        | Builds the app for production    |
+| `npm start`     | Server        | Starts the backend server (prod) |
 
-🔔 Email Alerts for Courses and Jobs
+---
 
-🧠 Advanced AI-based Learning Path Generator
+## 🔮 Future Enhancements
 
-🧾 License
-This project is licensed under the MIT License.
+* 🧭 Add listing for internships and jobs
+* 🧑‍🏫 Mentor Matching System
+* 🗂️ Resume Templates by Career Path
+* 🔔 Email Alerts for Courses and Jobs
+* 🧠 Advanced AI-based Learning Path Generator
+
+---
+
+## 🧾 License
+
+This project is licensed under the **MIT License**.
 Feel free to use, enhance, and share it to help students thrive!
 
-👣 Footer
-“CareerIT – Empowering the next generation of IT professionals.”
+---
+
+## 👣 Footer
+
+**“CareerIT – Empowering the next generation of IT professionals.”**
+
+---
+
