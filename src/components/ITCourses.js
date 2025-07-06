@@ -56,11 +56,6 @@ const platforms = [
     logo: upskill,
   },
   {
-    name: "edX",
-    link: "https://www.edx.org",
-    logo: edx,
-  },
-  {
     name: "Coursera",
     link: "https://www.coursera.org", 
     logo: cousera,
@@ -174,6 +169,11 @@ const platforms = [
     name: "Bitdegree",
     link: "https://www.bitdegree.org",
     logo: "https://www.bitdegree.org/favicon.ico",
+  },
+   {
+    name: "edX",
+    link: "https://www.edx.org",
+    logo: edx,
   },
   {
     name: "Codeasy",
