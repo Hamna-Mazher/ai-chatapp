@@ -36,6 +36,26 @@ const platforms = [
     logo: codecademy,
   },
   {
+    name: "Codewars",
+    link: "https://www.codewars.com",
+    logo: codewars,
+  },
+  {
+    name: "Sololearn",
+    link: "https://www.sololearn.com",
+    logo: sololearn,
+  },
+  {
+    name: "Code.org",
+    link: "https://www.code.org",
+    logo: codeorg,
+  },
+  {
+    name: "Upskill",
+    link: "https://upskillcourses.com",
+    logo: upskill,
+  },
+  {
     name: "edX",
     link: "https://www.edx.org",
     logo: edx,
@@ -54,6 +74,26 @@ const platforms = [
     name: "Udemy",
     link: "https://www.udemy.com",
     logo: udemy,
+  },
+  {
+    name: "Edabit",
+    link: "https://edabit.com",
+    logo: edabit,
+  },
+  {
+    name: "SQLZoo",
+    link: "https://sqlzoo.net",
+    logo: sqlzoo,
+  },
+  {
+    name: "GeeksforGeeks",
+    link: "https://www.geeksforgeeks.org",
+    logo: geeksforgeeks,
+  },
+  {
+    name: "Codingbat",
+    link: "https://codingbat.com",
+    logo: codingbat,
   },
   {
     name: "freeCodeCamp",
@@ -89,26 +129,6 @@ const platforms = [
     name: "Code Avengers",
     link: "https://www.codeavengers.com",
     logo: codeavengers,
-  },
-  {
-    name: "Codewars",
-    link: "https://www.codewars.com",
-    logo: codewars,
-  },
-  {
-    name: "Sololearn",
-    link: "https://www.sololearn.com",
-    logo: sololearn,
-  },
-  {
-    name: "Code.org",
-    link: "https://www.code.org",
-    logo: codeorg,
-  },
-  {
-    name: "Upskill",
-    link: "https://upskillcourses.com",
-    logo: upskill,
   },
   {
     name: "MIT OpenCourseWare",
@@ -149,26 +169,6 @@ const platforms = [
     name: "Coderbyte",
     link: "https://www.coderbyte.com",
     logo: coderbyte,
-  },
-  {
-    name: "Edabit",
-    link: "https://edabit.com",
-    logo: edabit,
-  },
-  {
-    name: "SQLZoo",
-    link: "https://sqlzoo.net",
-    logo: sqlzoo,
-  },
-  {
-    name: "GeeksforGeeks",
-    link: "https://www.geeksforgeeks.org",
-    logo: geeksforgeeks,
-  },
-  {
-    name: "Codingbat",
-    link: "https://codingbat.com",
-    logo: codingbat,
   },
   {
     name: "Bitdegree",
